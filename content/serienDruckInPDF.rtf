@@ -1,0 +1,124 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Sub SeriendruckAlsPDFSpeichern()\
+    \
+    Dim oDoc        As Document\
+    Dim oMailMerge  As MailMerge\
+    Dim oDS         As MailMergeDataSource\
+    Dim sAusgabeDir As String\
+    Dim sDateiname  As String\
+    Dim sMyID       As String\
+    Dim i           As Long\
+    Dim oTmpDoc     As Document\
+    \
+    ' --- Einstellungen ---\
+    sAusgabeDir = "C:\\temp\\"\
+    \
+    ' Sicherstellen, dass das Verzeichnis existiert\
+    If Dir(sAusgabeDir, vbDirectory) = "" Then\
+        MkDir sAusgabeDir\
+    End If\
+    \
+    Set oDoc      = ActiveDocument\
+    Set oMailMerge = oDoc.MailMerge\
+    Set oDS        = oMailMerge.DataSource\
+    \
+    ' Pr\'fcfen ob Seriendruck-Datenquelle verbunden ist\
+    If Not oDS.Valid Then\
+        MsgBox "Keine g\'fcltige Datenquelle verbunden!", vbCritical\
+        Exit Sub\
+    End If\
+    \
+    ' Zum ersten Datensatz springen\
+    oDS.ActiveRecord = wdFirstRecord\
+    \
+    Dim lErste As Long\
+    Dim lLetzte As Long\
+    lErste  = oDS.FirstRecord\
+    lLetzte = oDS.LastRecord\
+    \
+    ' Alle Datens\'e4tze durchlaufen\
+    For i = lErste To lLetzte\
+        \
+        oDS.ActiveRecord = i\
+        \
+        ' Wert des Feldes myID auslesen\
+        On Error Resume Next\
+        sMyID = oDS.DataFields("myID").Value\
+        On Error GoTo 0\
+        \
+        ' Fallback falls Feld leer oder nicht vorhanden\
+        If Trim(sMyID) = "" Then\
+            sMyID = "Datensatz_" & i\
+        End If\
+        \
+        ' Ung\'fcltige Zeichen f\'fcr Dateinamen entfernen\
+        sMyID = BereinigeDateiname(sMyID)\
+        \
+        ' Vollst\'e4ndiger PDF-Pfad\
+        sDateiname = sAusgabeDir & sMyID & ".pdf"\
+        \
+        ' Nur diesen einen Datensatz zusammenf\'fchren \uc0\u8594  tempor\'e4res Dokument\
+        oMailMerge.Destination    = wdSendToNewDocument\
+        oMailMerge.DataSource.FirstRecord = i\
+        oMailMerge.DataSource.LastRecord  = i\
+        oMailMerge.Execute False\
+        \
+        ' Das neu erzeugte Dokument ist jetzt ActiveDocument\
+        Set oTmpDoc = ActiveDocument\
+        \
+        ' Als PDF speichern\
+        oTmpDoc.ExportAsFixedFormat _\
+            OutputFileName:=sDateiname, _\
+            ExportFormat:=wdExportFormatPDF, _\
+            OpenAfterExport:=False, _\
+            OptimizeFor:=wdExportOptimizeForPrint, _\
+            Range:=wdExportAllDocument, _\
+            IncludeDocProps:=True, _\
+            KeepIRM:=True, _\
+            CreateBookmarks:=wdExportCreateWordBookmarks, _\
+            DocStructureTags:=True, _\
+            BitmapMissingFonts:=True, _\
+            UseISO19005_1:=False\
+        \
+        ' Tempor\'e4res Dokument schlie\'dfen (ohne speichern)\
+        oTmpDoc.Close SaveChanges:=False\
+        \
+        ' Zur\'fcck zum Hauptdokument\
+        oDoc.Activate\
+        \
+    Next i\
+    \
+    ' Datenquelle zur\'fccksetzen (alle Datens\'e4tze wieder aktiv)\
+    oDoc.MailMerge.DataSource.FirstRecord = wdDefaultFirstRecord\
+    oDoc.MailMerge.DataSource.LastRecord  = wdDefaultLastRecord\
+    \
+    MsgBox "Fertig! " & (lLetzte - lErste + 1) & " PDF(s) gespeichert in:" _\
+         & vbCrLf & sAusgabeDir, vbInformation\
+    \
+End Sub\
+\
+\
+' -------------------------------------------------------\
+' Hilfsfunktion: Entfernt ung\'fcltige Zeichen aus Dateinamen\
+' -------------------------------------------------------\
+Private Function BereinigeDateiname(sName As String) As String\
+    Dim sErgebnis As String\
+    Dim aUngueltig() As String\
+    Dim sZeichen   As String\
+    Dim j          As Integer\
+    \
+    aUngueltig = Split("\\ / : * ? "" < > |", " ")\
+    sErgebnis  = Trim(sName)\
+    \
+    For j = 0 To UBound(aUngueltig)\
+        sErgebnis = Join(Split(sErgebnis, aUngueltig(j)), "_")\
+    Next j\
+    \
+    BereinigeDateiname = sErgebnis\
+End Function}
