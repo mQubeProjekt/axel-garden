@@ -1,0 +1,63 @@
+METHOD create_delivery.
+
+  DATA: lt_items  TYPE TABLE OF bapidlvnorefitem,
+        lt_dates  TYPE TABLE OF bapidlvdeadln,
+        ls_dates  LIKE LINE OF lt_dates,
+        lt_return TYPE TABLE OF bapiret2.
+
+  " Lieferdatum
+  ls_dates-timetype      = 'WSHDRLFDAT'.
+  ls_dates-timestamp_utc = '20060930120000'.
+  ls_dates-timezone      = 'CET'.
+  APPEND ls_dates TO lt_dates.
+
+  " Plan-Warenausgangsdatum
+  ls_dates-timetype      = 'WSHDRWADAT'.
+  APPEND ls_dates TO lt_dates.
+
+  " Positionen mappen
+  LOOP AT it_positions ASSIGNING FIELD-SYMBOL(<pos>).
+
+    me->load_mapping_data(
+        iv_lot_no = CONV char10( <pos>-lot_no )
+      ).
+
+    APPEND VALUE #(
+      material   = <pos>-sku
+      dlv_qty    = <pos>-shippedquantity
+      sales_unit = <pos>-uom
+      plant      = me->werks
+      stge_loc   = me->lgort
+    ) TO lt_items.
+
+  ENDLOOP.
+
+  CALL FUNCTION 'BAPI_OUTB_DELIVERY_CREATENOREF'
+    EXPORTING
+      ship_point = gc_dlv-ship_point
+      dlv_type   = gc_dlv-dlv_type
+      salesorg   = gc_dlv-salesorg
+      distr_chan  = gc_dlv-distr_chan
+      division   = gc_dlv-division
+      ship_to    = me->kunnr
+      date_usage = '0'
+    IMPORTING
+      delivery   = ev_delivery
+    TABLES
+      dates      = lt_dates
+      dlv_items  = lt_items
+      return     = lt_return.
+
+  " Fehlerauswertung
+  READ TABLE lt_return INTO es_return WITH KEY type = 'E'.
+  IF sy-subrc <> 0.
+    READ TABLE lt_return INTO es_return WITH KEY type = 'A'.
+  ENDIF.
+
+  " Zusatzprüfung: Delivery-Nummer muss gefüllt sein
+  IF ev_delivery IS INITIAL AND es_return-type <> 'E'.
+    es_return-type    = 'E'.
+    es_return-message = 'Delivery wurde nicht angelegt, kein Fehler im Return.'.
+  ENDIF.
+
+ENDMETHOD.

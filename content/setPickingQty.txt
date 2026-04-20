@@ -1,0 +1,55 @@
+METHOD set_picking_qty.
+
+  DATA: lt_items_chg      TYPE TABLE OF bapiobdlvitemchg,
+        lt_items_chg_flg  TYPE TABLE OF bapiobdlvitemchgflg,
+        ls_item_chg       TYPE bapiobdlvitemchg,
+        ls_item_chg_flg   TYPE bapiobdlvitemchgflg,
+        ls_header_chg     TYPE bapiobdlvhdrchg,
+        ls_header_chg_flg TYPE bapiobdlvhdrchgflg,
+        lt_return         TYPE TABLE OF bapiret2.
+
+  DATA(lv_posnr) = '000010'.
+
+  LOOP AT it_positions ASSIGNING FIELD-SYMBOL(<pos>).
+
+    me->load_mapping_data(
+        iv_lot_no = CONV char10( <pos>-lot_no )
+      ).
+
+    " Item-Daten
+    CLEAR ls_item_chg.
+    ls_item_chg-delivery      = iv_delivery.
+    ls_item_chg-deliv_item    = lv_posnr.
+    ls_item_chg-pick_qty      = <pos>-shippedquantity.
+    ls_item_chg-fact_unit_nom = <pos>-shippedquantity.
+    ls_item_chg-sales_unit    = <pos>-uom.
+    APPEND ls_item_chg TO lt_items_chg.
+
+    " Änderungs-Flags – ohne diese passiert nichts!
+    CLEAR ls_item_chg_flg.
+    ls_item_chg_flg-delivery   = iv_delivery.
+    ls_item_chg_flg-deliv_item = lv_posnr.
+    ls_item_chg_flg-pick_qty   = 'X'.
+    APPEND ls_item_chg_flg TO lt_items_chg_flg.
+
+    lv_posnr = lv_posnr + 10.
+
+  ENDLOOP.
+
+  CALL FUNCTION 'BAPI_OUTB_DELIVERY_CHANGE'
+    EXPORTING
+      delivery       = iv_delivery
+      header_data    = ls_header_chg
+      header_control = ls_header_chg_flg
+    TABLES
+      item_data      = lt_items_chg
+      item_control   = lt_items_chg_flg
+      return         = lt_return.
+
+  " Fehlerauswertung
+  READ TABLE lt_return INTO es_return WITH KEY type = 'E'.
+  IF sy-subrc <> 0.
+    READ TABLE lt_return INTO es_return WITH KEY type = 'A'.
+  ENDIF.
+
+ENDMETHOD.

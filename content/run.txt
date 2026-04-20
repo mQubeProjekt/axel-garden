@@ -1,0 +1,53 @@
+METHOD run.
+
+  DATA: lv_delivery TYPE bapishpdelivnumb-deliv_numb,
+        ls_return   TYPE bapiret2.
+
+  " Schritt 1: Delivery anlegen
+  me->create_delivery(
+    EXPORTING
+      is_header    = is_header
+      it_positions = it_positions
+    IMPORTING
+      ev_delivery  = lv_delivery
+      es_return    = ls_return
+  ).
+  IF ls_return-type = 'E' OR lv_delivery IS INITIAL.
+    es_return = ls_return.
+    RETURN.
+  ENDIF.
+  CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+    EXPORTING wait = abap_true.
+
+  " Schritt 2: Picking-Menge setzen
+  me->set_picking_qty(
+    EXPORTING
+      iv_delivery  = lv_delivery
+      it_positions = it_positions
+    IMPORTING
+      es_return    = ls_return
+  ).
+  IF ls_return-type = 'E'.
+    es_return = ls_return.
+    RETURN.
+  ENDIF.
+  CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+    EXPORTING wait = abap_true.
+
+  " Schritt 3: PGI buchen
+  me->confirm_goods_issue(
+    EXPORTING
+      iv_delivery = lv_delivery
+    IMPORTING
+      es_return   = ls_return
+  ).
+  IF ls_return-type = 'E'.
+    es_return = ls_return.
+    RETURN.
+  ENDIF.
+  CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+    EXPORTING wait = abap_true.
+
+  es_return = ls_return.
+
+ENDMETHOD.

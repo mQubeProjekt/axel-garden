@@ -1,0 +1,29 @@
+" Public
+METHODS run
+  IMPORTING
+    is_header    TYPE zcs_z_r3_odata_test_mpc=>ts_header
+    it_positions TYPE t_it_positions
+  EXPORTING
+    es_return    TYPE bapiret2.
+
+" Private
+METHODS create_delivery
+  IMPORTING
+    is_header    TYPE zcs_z_r3_odata_test_mpc=>ts_header
+    it_positions TYPE t_it_positions
+  EXPORTING
+    ev_delivery  TYPE bapishpdelivnumb-deliv_numb
+    es_return    TYPE bapiret2.
+
+METHODS set_picking_qty
+  IMPORTING
+    iv_delivery  TYPE bapishpdelivnumb-deliv_numb
+    it_positions TYPE t_it_positions
+  EXPORTING
+    es_return    TYPE bapiret2.
+
+METHODS confirm_goods_issue
+  IMPORTING
+    iv_delivery  TYPE bapishpdelivnumb-deliv_numb
+  EXPORTING
+    es_return    TYPE bapiret2.

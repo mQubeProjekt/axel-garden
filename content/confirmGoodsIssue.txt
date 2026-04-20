@@ -1,0 +1,30 @@
+METHOD confirm_goods_issue.
+
+  DATA: lt_msg    TYPE TABLE OF bapi_msg,
+        lt_return TYPE TABLE OF bapiret2.
+
+  CALL FUNCTION 'BAPI_OUTB_DELIVERY_CONFIRM_DEC'
+    EXPORTING
+      vbeln        = iv_delivery
+      posting_date = sy-datum
+    TABLES
+      msg          = lt_msg
+      return       = lt_return.
+
+  " Erst lt_return prüfen
+  READ TABLE lt_return INTO es_return WITH KEY type = 'E'.
+  IF sy-subrc <> 0.
+    READ TABLE lt_return INTO es_return WITH KEY type = 'A'.
+  ENDIF.
+
+  " Falls lt_return leer, lt_msg auswerten
+  IF es_return IS INITIAL.
+    DATA ls_msg TYPE bapi_msg.
+    READ TABLE lt_msg INTO ls_msg WITH KEY type = 'E'.
+    IF sy-subrc = 0.
+      es_return-type    = ls_msg-type.
+      es_return-message = ls_msg-message.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.
