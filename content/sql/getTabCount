@@ -1,0 +1,35 @@
+DECLARE @DB1 NVARCHAR(128) = 'DatenbankName1';
+DECLARE @DB2 NVARCHAR(128) = 'DatenbankName2';
+
+DECLARE @SQL NVARCHAR(MAX) = '';
+
+SELECT @SQL = @SQL + '
+    SELECT 
+        ''' + db + ''' AS Datenbank,
+        t.TABLE_SCHEMA,
+        t.TABLE_NAME,
+        SUM(p.rows) AS Anzahl_Datensaetze
+    FROM 
+        [' + db + '].INFORMATION_SCHEMA.TABLES t
+        INNER JOIN [' + db + '].sys.partitions p 
+            ON p.object_id = OBJECT_ID(''' + db + '.'' + t.TABLE_SCHEMA + ''.'' + t.TABLE_NAME)
+    WHERE 
+        t.TABLE_TYPE = ''BASE TABLE''
+        AND p.index_id IN (0, 1)
+    GROUP BY 
+        t.TABLE_SCHEMA,
+        t.TABLE_NAME
+
+    UNION ALL
+'
+FROM (VALUES (@DB1), (@DB2)) AS DBs(db);
+
+-- Letztes "UNION ALL" entfernen
+SET @SQL = LEFT(@SQL, LEN(@SQL) - LEN('    UNION ALL'));
+
+SET @SQL = @SQL + '
+ORDER BY 
+    Datenbank,
+    Anzahl_Datensaetze DESC;';
+
+EXEC sp_executesql @SQL;
