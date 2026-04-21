@@ -1,0 +1,19 @@
+Open SAP transaction “VL03N – Display Outbound Delivery” and search for the original order in the “External Deliveries with External Identification”. 
+Insert order number and press “Enter
+Double klick on the SAP order number that pops up and press Enter. 
+Double check that the order contains the same items and quantity as the return order and copy the SAP order number. 
+Open SAP transaction “VL09 – Cancel Goods Issue” and insert the SAP order number, press Execute
+Tick the box for the return, press define date and put original order date. If prior to current month put the 1st of the current month. 
+Press “Reverse”
+
+Open “VL02N – Change Outbound Delivery” and insert the SAP order number. 
+Press “Delete” if the complete order was returned.  
+Add comment on updated order status in Stock Levels document and include the original removed SAP order number.  
+
+If the order was partially returned, edit the order in VL02N to remove the returned parts using the edit mode to e.g.: 
+Change quantity in an existing line 
+Remove a line (minus button) 
+Add a line (Plus button
+
+After editing the order, repost it using the transaction “VL06O – Outbound Delivery Monitor”  
+Re-post goods issue.  
