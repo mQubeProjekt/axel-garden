@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JSON Cleaner</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@300;700;900&display=swap');
+
+  :root {
+    --bg:       #f0ede6;
+    --ink:      #1a1814;
+    --card:     #faf8f3;
+    --border:   #1a1814;
+    --accent:   #d4401a;
+    --accent2:  #2a6b3c;
+    --muted:    #7a7570;
+    --radius:   0px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Space Mono', monospace;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 3px solid var(--border);
+    padding: 24px 40px;
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    background: var(--ink);
+  }
+  .logo {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    color: var(--bg);
+    letter-spacing: -1px;
+  }
+  .logo span { color: var(--accent); }
+  .tagline {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* MAIN */
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr auto;
+    gap: 0;
+    padding: 0;
+  }
+
+  /* DROP ZONE */
+  .drop-zone {
+    grid-column: 1 / 3;
+    border-bottom: 2px solid var(--border);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: background .2s;
+    min-height: 200px;
+    position: relative;
+    background: var(--card);
+  }
+  .drop-zone.drag-over {
+    background: #e8f5ec;
+  }
+  .drop-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  .drop-icon {
+    font-size: 48px;
+    line-height: 1;
+    transition: transform .3s;
+  }
+  .drop-zone:hover .drop-icon,
+  .drop-zone.drag-over .drop-icon { transform: translateY(-6px); }
+  .drop-label {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.5px;
+  }
+  .drop-sub {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .file-badge {
+    display: none;
+    background: var(--accent2);
+    color: #fff;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  /* PANELS */
+  .panel {
+    border-right: 2px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .panel:last-of-type { border-right: none; }
+  .panel-header {
+    padding: 14px 20px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--ink);
+  }
+  .panel-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--bg);
+  }
+  .line-count {
+    font-size: 11px;
+    color: var(--muted);
+    background: #2e2b26;
+    padding: 3px 10px;
+  }
+  .removed-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent2);
+    background: #e8f5ec;
+    padding: 3px 10px;
+    border: 1px solid var(--accent2);
+    display: none;
+  }
+
+  textarea {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    padding: 20px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    background: var(--card);
+    color: var(--ink);
+    min-height: 280px;
+  }
+  textarea::placeholder { color: #bbb8b0; }
+  textarea:focus { background: #fffdf8; }
+
+  /* ACTIONS */
+  .actions {
+    grid-column: 1 / 3;
+    border-top: 2px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--card);
+  }
+
+  .btn {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 12px 28px;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    transition: all .15s;
+    text-transform: uppercase;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn-primary:hover { background: #b83515; border-color: #b83515; }
+  .btn-secondary {
+    background: none;
+    color: var(--ink);
+  }
+  .btn-secondary:hover { background: var(--ink); color: var(--bg); }
+  .btn:disabled { opacity: .35; cursor: not-allowed; }
+
+  .status-msg {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-left: auto;
+  }
+  .status-msg.ok  { color: var(--accent2); font-weight: 700; }
+  .status-msg.err { color: var(--accent);  font-weight: 700; }
+
+  /* DIFF HIGHLIGHT */
+  .diff-line-removed {
+    background: #fde8e2;
+    text-decoration: line-through;
+    color: var(--accent);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">JSON<span>.</span>clean</div>
+  <div class="tagline">// Leere &amp; null-Werte entfernen</div>
+</header>
+
+<main>
+
+  <!-- DROP ZONE -->
+  <div class="drop-zone" id="drop-zone">
+    <input type="file" id="file-input" accept=".json,.txt"/>
+    <div class="drop-icon">📂</div>
+    <div class="drop-label">JSON-Datei hier ablegen</div>
+    <div class="drop-sub">oder klicken zum Auswählen · .json / .txt</div>
+    <div class="file-badge" id="file-badge">–</div>
+  </div>
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">Original</span>
+      <span class="line-count" id="in-count">0 Zeilen</span>
+    </div>
+    <textarea id="input-area" placeholder="JSON hier einfügen oder Datei ablegen…"
+      oninput="onManualInput()"></textarea>
+  </div>
+
+  <!-- OUTPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">Bereinigt</span>
+      <span class="removed-badge" id="removed-badge">–</span>
+    </div>
+    <textarea id="output-area" readonly placeholder="Ergebnis erscheint hier…"></textarea>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <button class="btn btn-primary" id="btn-clean" onclick="cleanJson()" disabled>
+      ▶ Bereinigen
+    </button>
+    <button class="btn btn-secondary" id="btn-download" onclick="downloadResult()" disabled>
+      ⬇ Download
+    </button>
+    <button class="btn btn-secondary" onclick="resetAll()">
+      ✕ Reset
+    </button>
+    <span class="status-msg" id="status-msg"></span>
+  </div>
+
+</main>
+
+<script>
+  let originalFileName = 'cleaned.json';
+
+  // ── DROP ZONE ─────────────────────────────────────────────
+  const dropZone  = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+
+  dropZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+  });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) loadFile(file);
+  });
+  fileInput.addEventListener('change', e => {
+    if (e.target.files[0]) loadFile(e.target.files[0]);
+  });
+
+  function loadFile(file) {
+    originalFileName = file.name.replace(/(\.[^.]+)$/, '_cleaned$1');
+    const reader = new FileReader();
+    reader.onload = ev => {
+      setInput(ev.target.result);
+      showBadge(file.name);
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  function showBadge(name) {
+    const b = document.getElementById('file-badge');
+    b.textContent = '📄 ' + name;
+    b.style.display = 'inline-block';
+  }
+
+  // ── INPUT ─────────────────────────────────────────────────
+  function setInput(text) {
+    const ta = document.getElementById('input-area');
+    ta.value = text;
+    updateLineCount(text);
+    document.getElementById('btn-clean').disabled = false;
+    document.getElementById('status-msg').textContent = '';
+    document.getElementById('status-msg').className = 'status-msg';
+    document.getElementById('output-area').value = '';
+    document.getElementById('removed-badge').style.display = 'none';
+    document.getElementById('btn-download').disabled = true;
+  }
+
+  function onManualInput() {
+    const text = document.getElementById('input-area').value;
+    updateLineCount(text);
+    document.getElementById('btn-clean').disabled = text.trim() === '';
+    document.getElementById('output-area').value = '';
+    document.getElementById('removed-badge').style.display = 'none';
+    document.getElementById('btn-download').disabled = true;
+    document.getElementById('status-msg').textContent = '';
+  }
+
+  function updateLineCount(text) {
+    const lines = text === '' ? 0 : text.split('\n').length;
+    document.getElementById('in-count').textContent = lines + ' Zeilen';
+  }
+
+  // ── CLEAN ─────────────────────────────────────────────────
+
+  // Rekursiv alle leeren ("" / null) Keys aus einem Objekt/Array entfernen
+  function removeEmptyValues(data) {
+    if (Array.isArray(data)) {
+      return data
+        .map(item => removeEmptyValues(item))
+        .filter(item => !isEmpty(item));
+    }
+    if (data !== null && typeof data === 'object') {
+      const result = {};
+      for (const [key, val] of Object.entries(data)) {
+        const cleaned = removeEmptyValues(val);
+        if (!isEmpty(cleaned)) {
+          result[key] = cleaned;
+        }
+      }
+      return result;
+    }
+    return data;
+  }
+
+  // Gilt als "leer": null, "" (leerer String)
+  function isEmpty(val) {
+    if (val === null)  return true;
+    if (val === '')    return true;
+    // Leeres Objekt nach Bereinigung → ebenfalls leer
+    if (val !== null && typeof val === 'object' && !Array.isArray(val) && Object.keys(val).length === 0) return true;
+    // Leeres Array → ebenfalls leer
+    if (Array.isArray(val) && val.length === 0) return true;
+    return false;
+  }
+
+  function cleanJson() {
+    const input  = document.getElementById('input-area').value;
+    const status = document.getElementById('status-msg');
+
+    // Validate JSON
+    let parsed;
+    try {
+      parsed = JSON.parse(input);
+    } catch(e) {
+      status.textContent = '⚠ Kein gültiges JSON: ' + e.message;
+      status.className = 'status-msg err';
+      return;
+    }
+
+    // Bereinigen
+    const cleanedObj = removeEmptyValues(parsed);
+    const result     = JSON.stringify(cleanedObj, null, 2);
+
+    // Zeilen zählen (für Info)
+    const linesBefore = input.split('\n').length;
+    const linesAfter  = result.split('\n').length;
+    const removed     = Math.max(0, linesBefore - linesAfter);
+
+    document.getElementById('output-area').value = result;
+    document.getElementById('btn-download').disabled = false;
+
+    const badge = document.getElementById('removed-badge');
+    badge.style.display = 'inline-block';
+
+    if (removed === 0) {
+      badge.textContent = '✓ Nichts entfernt';
+      status.textContent = '✓ Keine leeren oder null-Werte gefunden – JSON ist sauber.';
+    } else {
+      badge.textContent  = '−' + removed + ' Zeile' + (removed === 1 ? '' : 'n');
+      status.textContent = removed + ' Zeile' + (removed === 1 ? '' : 'n') + ' mit leerem Wert oder null entfernt.';
+    }
+    status.className = 'status-msg ok';
+  }
+
+  // ── DOWNLOAD ──────────────────────────────────────────────
+  function downloadResult() {
+    const content = document.getElementById('output-area').value;
+    if (!content) return;
+    const blob = new Blob([content], { type: 'application/json;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = originalFileName;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── RESET ─────────────────────────────────────────────────
+  function resetAll() {
+    document.getElementById('input-area').value  = '';
+    document.getElementById('output-area').value = '';
+    document.getElementById('in-count').textContent = '0 Zeilen';
+    document.getElementById('removed-badge').style.display = 'none';
+    document.getElementById('file-badge').style.display = 'none';
+    document.getElementById('btn-clean').disabled    = true;
+    document.getElementById('btn-download').disabled = true;
+    document.getElementById('status-msg').textContent = '';
+    document.getElementById('status-msg').className = 'status-msg';
+    fileInput.value = '';
+    originalFileName = 'cleaned.json';
+  }
+</script>
+</body>
+</html>
