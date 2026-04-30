@@ -1,0 +1,33 @@
+{
+    "ASN": {
+        "SHIPMENT": [{
+                "RECORD_TYPE": "H",
+                "ORG_ID": "DHLEUR",
+                "DISTRIBUTION_CENTER": "NLKLE",
+                "BUSINESS_UNIT": "KILONUPXX",
+                "SHIPMENT_NUMBER": "4505506814",
+                "ACTION_CD": "A",
+                "SHIPMENT_DATE": "20241206",
+                "TOT_QTY_SHIPPED": "30",
+                "SUPPLIER_ID": "KLNPVENDOR",
+                "SUPPLIER_NAME": "KILONUPXX Vendor",
+                "DETAILS": {
+                    "SHIPMENT_DETAILS": [{
+                            "RECORD_TYPE": "D",
+                            "ORG_ID": "DHLEUR",
+                            "DISTRIBUTION_CENTER": "NLVEL",
+                            "BUSINESS_UNIT": "KILONUPXX",
+                            "SHIPMENT_NUMBER": "4505506814",
+                            "SHIPMENT_LINE_NO": "1",
+                            "ITEM": "1000829",
+                            "QTY": "30",
+                            "QTY_UOM": "EA",
+                            "LOT_NO": "6550",
+                            "REF_ID2": "803881380-ICU"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
