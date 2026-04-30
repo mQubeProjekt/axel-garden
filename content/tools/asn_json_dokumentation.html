@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ASN JSON Dokumentation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap');
+
+  :root {
+    --bg:        #f5f4f0;
+    --surface:   #ffffff;
+    --ink:       #1c1c1e;
+    --muted:     #6e6e73;
+    --border:    #d8d8d8;
+    --accent:    #0051a8;
+    --accent2:   #007a3d;
+    --header-h:  #0051a8;
+    --header-d:  #1a6b3a;
+    --tag-h:     #ddeeff;
+    --tag-d:     #d9f0e5;
+    --radius:    8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 40px 0 60px;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    max-width: 960px;
+    margin: 0 auto 36px;
+    padding: 0 32px;
+    border-left: 4px solid var(--accent);
+  }
+  .page-header .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .page-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .page-header p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    max-width: 960px;
+    margin: 0 auto 28px;
+    padding: 0 32px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .dot-h { background: var(--header-h); }
+  .dot-d { background: var(--header-d); }
+
+  /* ── SECTION ── */
+  .section {
+    max-width: 960px;
+    margin: 0 auto 24px;
+    padding: 0 32px;
+  }
+  .section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .level-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .badge-h { background: var(--tag-h); color: var(--header-h); }
+  .badge-d { background: var(--tag-d); color: var(--header-d); }
+
+  /* ── TABLE ── */
+  .doc-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    font-size: 13px;
+  }
+  .doc-table thead tr {
+    background: var(--ink);
+    color: #fff;
+  }
+  .doc-table thead th {
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    white-space: nowrap;
+  }
+  .doc-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background .15s;
+  }
+  .doc-table tbody tr:last-child { border-bottom: none; }
+  .doc-table tbody tr:hover { background: #f0f4ff; }
+  .doc-table td {
+    padding: 11px 16px;
+    vertical-align: middle;
+    line-height: 1.4;
+  }
+
+  /* Field name */
+  .field-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  /* SAP Tabelle */
+  .sap-table {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* SAP Feld */
+  .sap-field {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--accent2);
+    font-weight: 600;
+  }
+
+  /* Beispielwert */
+  .example-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    background: #f0f4ff;
+    color: #334;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Beschreibung */
+  .desc { color: var(--muted); font-size: 13px; }
+
+  /* required dot */
+  td.req::before {
+    content: '●';
+    color: var(--accent);
+    margin-right: 6px;
+    font-size: 8px;
+    vertical-align: middle;
+  }
+
+  /* ── FOOTER ── */
+  .doc-footer {
+    max-width: 960px;
+    margin: 40px auto 0;
+    padding: 0 32px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+
+  @media print {
+    body { background: white; padding: 20px 0; }
+    .doc-table tbody tr:hover { background: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="eyebrow">Interface-Dokumentation · ASN</div>
+  <h1>ASN JSON ↔ SAP Mapping</h1>
+  <p>Technische Felddokumentation der Advance Ship Notice (ASN) Nachrichtenstruktur<br>
+     mit Zuordnung zu den entsprechenden SAP-Tabellen und -Feldern.</p>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot dot-h"></div> Header-Ebene (SHIPMENT)</div>
+  <div class="legend-item"><div class="legend-dot dot-d"></div> Detail-Ebene (SHIPMENT_DETAILS)</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SECTION 1: SHIPMENT HEADER                         -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">
+    <span class="level-badge badge-h">H</span>
+    Shipment – Header-Ebene
+  </div>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>JSON-Feldname</th>
+        <th>SAP-Tabelle</th>
+        <th>SAP-Feld</th>
+        <th>Beispielwert</th>
+        <th>Beschreibung</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="field-name">RECORD_TYPE</td>
+        <td>–</td>
+        <td>–</td>
+        <td><span class="example-val">H</span></td>
+        <td class="desc">Kennzeichen für Header-Satz. Fixer Wert „H".</td>
+      </tr>
+      <tr>
+        <td class="field-name">ORG_ID</td>
+        <td class="sap-table">T001</td>
+        <td class="sap-field">BUKRS</td>
+        <td><span class="example-val">DHLEUR</span></td>
+        <td class="desc">Organisations-ID / Buchungskreis des Empfängers.</td>
+      </tr>
+      <tr>
+        <td class="field-name">DISTRIBUTION_CENTER</td>
+        <td class="sap-table">T001W</td>
+        <td class="sap-field">WERKS</td>
+        <td><span class="example-val">NLKLE</span></td>
+        <td class="desc">Werk / Distributionszentrum des Empfängers.</td>
+      </tr>
+      <tr>
+        <td class="field-name">BUSINESS_UNIT</td>
+        <td class="sap-table">T001W</td>
+        <td class="sap-field">NAME1</td>
+        <td><span class="example-val">KILONUPXX</span></td>
+        <td class="desc">Geschäftsbereich / Name des Werks.</td>
+      </tr>
+      <tr>
+        <td class="field-name">SHIPMENT_NUMBER</td>
+        <td class="sap-table">LIKP</td>
+        <td class="sap-field">VBELN</td>
+        <td><span class="example-val">4505506814</span></td>
+        <td class="desc">SAP-Liefernummer (Outbound Delivery).</td>
+      </tr>
+      <tr>
+        <td class="field-name">ACTION_CD</td>
+        <td>–</td>
+        <td>–</td>
+        <td><span class="example-val">A</span></td>
+        <td class="desc">Aktionscode: A = Add / Neu, C = Change, D = Delete.</td>
+      </tr>
+      <tr>
+        <td class="field-name">SHIPMENT_DATE</td>
+        <td class="sap-table">LIKP</td>
+        <td class="sap-field">WADAT</td>
+        <td><span class="example-val">20241206</span></td>
+        <td class="desc">Warenausgangsdatum (Format YYYYMMDD).</td>
+      </tr>
+      <tr>
+        <td class="field-name">TOT_QTY_SHIPPED</td>
+        <td class="sap-table">LIKP</td>
+        <td class="sap-field">GEWEI</td>
+        <td><span class="example-val">30</span></td>
+        <td class="desc">Gesamtmenge der Lieferung (alle Positionen summiert).</td>
+      </tr>
+      <tr>
+        <td class="field-name">SUPPLIER_ID</td>
+        <td class="sap-table">LFA1</td>
+        <td class="sap-field">LIFNR</td>
+        <td><span class="example-val">KLNPVENDOR</span></td>
+        <td class="desc">Lieferantennummer im SAP-Kreditorenstamm.</td>
+      </tr>
+      <tr>
+        <td class="field-name">SUPPLIER_NAME</td>
+        <td class="sap-table">LFA1</td>
+        <td class="sap-field">NAME1</td>
+        <td><span class="example-val">KILONUPXX Vendor</span></td>
+        <td class="desc">Name des Lieferanten aus dem Kreditorenstamm.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SECTION 2: SHIPMENT DETAILS                        -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">
+    <span class="level-badge badge-d">D</span>
+    Shipment Details – Positions-Ebene
+  </div>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>JSON-Feldname</th>
+        <th>SAP-Tabelle</th>
+        <th>SAP-Feld</th>
+        <th>Beispielwert</th>
+        <th>Beschreibung</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="field-name">RECORD_TYPE</td>
+        <td>–</td>
+        <td>–</td>
+        <td><span class="example-val">D</span></td>
+        <td class="desc">Kennzeichen für Detail-Satz. Fixer Wert „D".</td>
+      </tr>
+      <tr>
+        <td class="field-name">ORG_ID</td>
+        <td class="sap-table">T001</td>
+        <td class="sap-field">BUKRS</td>
+        <td><span class="example-val">DHLEUR</span></td>
+        <td class="desc">Organisations-ID auf Positionsebene (identisch mit Header).</td>
+      </tr>
+      <tr>
+        <td class="field-name">DISTRIBUTION_CENTER</td>
+        <td class="sap-table">T001W</td>
+        <td class="sap-field">WERKS</td>
+        <td><span class="example-val">NLVEL</span></td>
+        <td class="desc">Zielwerk auf Positionsebene (kann vom Header abweichen).</td>
+      </tr>
+      <tr>
+        <td class="field-name">BUSINESS_UNIT</td>
+        <td class="sap-table">T001W</td>
+        <td class="sap-field">NAME1</td>
+        <td><span class="example-val">KILONUPXX</span></td>
+        <td class="desc">Geschäftsbereich auf Positionsebene.</td>
+      </tr>
+      <tr>
+        <td class="field-name">SHIPMENT_NUMBER</td>
+        <td class="sap-table">LIPS</td>
+        <td class="sap-field">VBELN</td>
+        <td><span class="example-val">4505506814</span></td>
+        <td class="desc">Liefernummer – Referenz zum Header (LIKP-VBELN).</td>
+      </tr>
+      <tr>
+        <td class="field-name">SHIPMENT_LINE_NO</td>
+        <td class="sap-table">LIPS</td>
+        <td class="sap-field">POSNR</td>
+        <td><span class="example-val">1</span></td>
+        <td class="desc">Positionsnummer der Lieferung.</td>
+      </tr>
+      <tr>
+        <td class="field-name">ITEM</td>
+        <td class="sap-table">LIPS</td>
+        <td class="sap-field">MATNR</td>
+        <td><span class="example-val">1000829</span></td>
+        <td class="desc">SAP-Materialnummer.</td>
+      </tr>
+      <tr>
+        <td class="field-name">QTY</td>
+        <td class="sap-table">LIPS</td>
+        <td class="sap-field">LFIMG</td>
+        <td><span class="example-val">30</span></td>
+        <td class="desc">Liefermenge der Position.</td>
+      </tr>
+      <tr>
+        <td class="field-name">QTY_UOM</td>
+        <td class="sap-table">LIPS</td>
+        <td class="sap-field">VRKME</td>
+        <td><span class="example-val">EA</span></td>
+        <td class="desc">Mengeneinheit (EA = Each / Stück).</td>
+      </tr>
+      <tr>
+        <td class="field-name">LOT_NO</td>
+        <td class="sap-table">LIPS</td>
+        <td class="sap-field">CHARG</td>
+        <td><span class="example-val">6550</span></td>
+        <td class="desc">Chargennummer des Materials.</td>
+      </tr>
+      <tr>
+        <td class="field-name">REF_ID2</td>
+        <td class="sap-table">LIPS</td>
+        <td class="sap-field">VGBEL</td>
+        <td><span class="example-val">803881380-ICU</span></td>
+        <td class="desc">Externe Referenz / Vorläuferbelegnummer (z.B. Kundenauftrag).</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  <span>ASN JSON ↔ SAP Mapping · v1.0</span>
+  <span>Tabellen: LIKP · LIPS · LFA1 · T001 · T001W</span>
+</div>
+
+</body>
+</html>
