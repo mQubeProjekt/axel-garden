@@ -1,0 +1,15 @@
+- task: PowerShell@2
+  displayName: 'Test SQL connectivity'
+  inputs:
+    targetType: 'inline'
+    script: |
+      $server = "DEIN_SERVER"
+
+      Write-Host "Testing connection to $server..."
+
+      try {
+        Test-NetConnection -ComputerName $server -Port 1433
+      }
+      catch {
+        Write-Host "Connection failed"
+      }
