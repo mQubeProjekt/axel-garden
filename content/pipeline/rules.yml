@@ -1,0 +1,30 @@
+trigger: none
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- checkout: self
+
+- task: PowerShell@2
+  displayName: 'Read SQL file'
+  inputs:
+    targetType: 'inline'
+    script: |
+      Write-Host "SourcesDirectory: $(Build.SourcesDirectory)"
+
+      $filePath = "$(Build.SourcesDirectory)\procedures\MY_PROCEDURE.sql"
+
+      Write-Host "File path: $filePath"
+
+      if (-not (Test-Path $filePath)) {
+        Write-Error "File not found: $filePath"
+        exit 1
+      }
+
+      $procText = Get-Content -Path $filePath -Raw -Encoding UTF8
+
+      Write-Host "File found."
+      Write-Host "Length: $($procText.Length) characters"
+      Write-Host "First 300 characters:"
+      Write-Host $procText.Substring(0, [Math]::Min(300, $procText.Length))
