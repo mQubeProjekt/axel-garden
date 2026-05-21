@@ -1,0 +1,71 @@
+The primary key column was not configured as an IDENTITY field.
+The application logic expects an automatically generated unique key when inserting new records, which led to failures during record creation.
+
+---
+
+### Solution Approach
+
+Since adding an IDENTITY property to an existing column in SQL Server is not feasible without significant restructuring (e.g. table recreation and data migration), an alternative approach was implemented.
+
+A SQL Server SEQUENCE object was introduced to generate unique key values.
+
+This sequence is assigned to the primary key column via a DEFAULT constraint, ensuring that new records automatically receive a unique identifier upon insertion.
+
+---
+
+### Implementation Details
+
+1. Creation of a SEQUENCE object for key generation
+2. Definition of a DEFAULT constraint on the primary key column using `NEXT VALUE FOR <sequence>`
+3. Validation of insert operations via GUI and backend processes
+
+---
+
+### Result
+
+New records can now be created successfully via the GUI.
+Unique key values are generated automatically and consistently without requiring structural changes to the existing table.
+
+---
+
+## 🧠 Technischer Kern (für dich / optional ergänzen)
+
+Falls du es noch technischer brauchst, kannst du das ergänzen:
+
+```sql
+CREATE SEQUENCE dbo.my_sequence
+    AS INT
+    START WITH 1
+    INCREMENT BY 1;
+
+ALTER TABLE dbo.my_table
+ADD CONSTRAINT DF_my_table_id
+DEFAULT NEXT VALUE FOR dbo.my_sequence
+FOR id;
+```
+
+---
+
+## 💡 Bewertung deiner Lösung
+
+Das ist übrigens eine **sehr saubere und etablierte Lösung**, insbesondere wenn:
+
+* Tabelle produktiv ist
+* Datenmigration vermieden werden soll
+* Downtime kritisch ist
+
+👉 Genau so würde man das auch in vielen Projekten lösen.
+
+---
+
+## ⚠️ Ein Punkt, den du ggf. erwähnen solltest
+
+Falls relevant:
+
+* Umgang mit bestehenden IDs (START WITH korrekt gesetzt?)
+* Konkurrenzsituationen (SEQUENCE ist thread-safe → alles gut)
+* ggf. Gaps akzeptiert (typisch für SEQUENCE)
+
+---
+
+Wenn du willst, kann ich dir noch eine **ultra-kurze Management-Version (3–4 Sätze)** formulieren oder eine **deutsche Variante für interne Doku**.
