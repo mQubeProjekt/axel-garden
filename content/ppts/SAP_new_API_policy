@@ -1,0 +1,236 @@
+Für eine interne SAP-Abteilung würde ich die Präsentation nicht als reine Vorstellung der Policy aufbauen, sondern als:
+
+> **"Was bedeutet die neue SAP API Policy konkret für unsere Projekte?"**
+
+Dann wird die Präsentation sofort relevant und die Zuhörer bleiben aufmerksam.
+
+## Vorschlag: 10–12 Folien
+
+### Folie 1 – Titel
+
+**SAP New API Policy**
+Auswirkungen auf Entwicklung, Integration und Betrieb
+
+Untertitel:
+
+* R/3
+* S/4HANA
+* RFC
+* IDoc
+* OData
+* BTP
+* KI-Anwendungen
+
+---
+
+### Folie 2 – Warum gibt es die neue Policy?
+
+SAP verfolgt drei strategische Ziele:
+
+* Clean Core
+* Cloud-Transformation
+* KI-gestützte Prozesse
+
+Kernaussage:
+
+> SAP möchte die Nutzung von dokumentierten und unterstützten Schnittstellen erzwingen.
+
+---
+
+### Folie 3 – Die zentrale Aussage
+
+Groß dargestellt:
+
+> "APIs must be listed in SAP Business Accelerator Hub. All non-published APIs are prohibited."
+
+Darunter:
+
+**Erste Reaktion vieler Kunden:**
+
+* Sind RFCs verboten?
+* Sind IDocs verboten?
+* Sind Eigenentwicklungen verboten?
+* Ist R/3 überhaupt noch nutzbar?
+
+---
+
+### Folie 4 – Was ist eine "Published API"?
+
+Tabelle:
+
+| Erlaubt                        | Fraglich / Verboten           |
+| ------------------------------ | ----------------------------- |
+| Business Accelerator Hub APIs  | interne SAP APIs              |
+| veröffentlichte OData Services | nicht dokumentierte Endpunkte |
+| veröffentlichte SOAP APIs      | interne Funktionsbausteine    |
+| Events                         | direkte DB-Zugriffe           |
+
+Hier würde ich den Business Accelerator Hub erwähnen:
+
+[SAP Business Accelerator Hub](https://api.sap.com?utm_source=chatgpt.com)
+
+---
+
+### Folie 5 – Die wichtige Ausnahme
+
+Hier würde ich den Abschnitt zitieren, der kundeneigene Schnittstellen erlaubt.
+
+Kernaussage:
+
+> Custom-developed ABAP interfaces remain allowed in On-Premise and Private Cloud environments.
+
+Dann Beispiele:
+
+✔ Z-RFC
+✔ Z-OData-Service
+✔ eigene REST-Schnittstelle
+
+---
+
+### Folie 6 – Sind IDocs verboten?
+
+Überschrift:
+
+**Mythos oder Wahrheit?**
+
+| Aussage                                     | Bewertung |
+| ------------------------------------------- | --------- |
+| IDocs sind verboten                         | ❌         |
+| IDocs sind strategisch nicht mehr bevorzugt | ✔         |
+| APIs werden bevorzugt                       | ✔         |
+| Bestehende IDocs müssen ersetzt werden      | ❌         |
+
+Das dürfte für viele Kollegen die wichtigste Folie werden.
+
+---
+
+### Folie 7 – Auswirkungen auf unsere Landschaft
+
+Hier würde ich Eure typischen Technologien einordnen.
+
+| Technologie | Bewertung             |
+| ----------- | --------------------- |
+| RFC         | weiterhin möglich     |
+| Z-RFC       | weiterhin möglich     |
+| IDoc        | weiterhin unterstützt |
+| OData       | bevorzugt             |
+| SOAP        | möglich               |
+| BAPI        | abhängig von Freigabe |
+| interne FM  | kritisch              |
+
+---
+
+### Folie 8 – Praxisbeispiel
+
+Hier würde ich Dein ASN-/Carrier-Projekt verwenden.
+
+```text
+Carrier
+   ↓
+Middleware
+   ↓
+Z-OData Service
+   ↓
+ABAP Klasse
+   ↓
+BAPI
+   ↓
+SAP MM
+```
+
+Frage:
+
+**Ist dieses Szenario policy-konform?**
+
+Antwort:
+
+Voraussichtlich ja.
+
+Dadurch wird die Diskussion sehr konkret.
+
+---
+
+### Folie 9 – KI und Agenten
+
+Diese Folie wird wahrscheinlich die meiste Diskussion auslösen.
+
+Links:
+
+**Heute**
+
+* Mensch startet Prozess
+* API wird aufgerufen
+
+Rechts:
+
+**Agentic AI**
+
+* KI entscheidet selbst
+* KI ruft APIs auf
+* KI löst Folgeaktionen aus
+
+Kernaussage:
+
+> Hier liegen die größten offenen Fragen der neuen Policy.
+
+---
+
+### Folie 10 – Risiken
+
+Ampel-Darstellung:
+
+🟢 Eigene APIs
+
+🟢 OData
+
+🟢 Business Accelerator Hub APIs
+
+🟡 BAPIs
+
+🟡 IDocs
+
+🔴 Interne nicht freigegebene SAP-Objekte
+
+---
+
+### Folie 11 – Empfehlungen
+
+Für neue Entwicklungen:
+
+1. Zuerst Business Accelerator Hub prüfen
+2. Standard-API bevorzugen
+3. OData vor Eigenentwicklung
+4. Z-Schnittstellen sauber dokumentieren
+5. Keine neuen Abhängigkeiten zu internen SAP-Objekten schaffen
+
+---
+
+### Folie 12 – Offene Fragen
+
+Diese Folie würde ich bewusst offen lassen:
+
+* Was bedeutet die Policy für R/3?
+* Sind interne BAPIs betroffen?
+* Wie werden bestehende Lösungen bewertet?
+* Was gilt für KI-Agenten?
+* Welche Übergangsfristen gibt es?
+
+---
+
+## Was ich an Deiner Stelle zusätzlich machen würde
+
+Eine einzige Folie mit dem Titel:
+
+### "Was bedeutet das für unsere Abteilung?"
+
+und dort Eure typischen Themen nennen:
+
+* SAP MM
+* EH&S / Product Compliance
+* RFC-Schnittstellen
+* OData
+* Carrier-Anbindungen
+* Middleware
+* zukünftige KI-Projekte
+
+Dann wird aus einer allgemeinen SAP-Präsentation eine Präsentation, die direkt auf Eure tägliche Arbeit einzahlt. Das erhöht erfahrungsgemäß die Aufmerksamkeit deutlich.
