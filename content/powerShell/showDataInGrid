@@ -22,3 +22,8 @@ catch {
 }
 
 Read-Host "Enter drücken zum Beenden"
+
+
+@echo off
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Scripts\showData.ps1"
+pause
