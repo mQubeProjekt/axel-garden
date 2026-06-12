@@ -1,0 +1,30 @@
+#config.ps1
+
+$SqlConfig = [PSCustomObject]@{
+    Server   = "MEINSERVER\SQLEXPRESS"
+    Database = "MeineDB"
+    TrustCert = $true
+}
+
+#SqlTools.ps1#
+
+function Invoke-Table
+{
+    param(
+        [string]$TableName
+    )
+
+    Invoke-Sqlcmd `
+        -ServerInstance $SqlConfig.Server `
+        -Database $SqlConfig.Database `
+        -Query "SELECT * FROM $TableName" `
+        -TrustServerCertificate:$SqlConfig.TrustCert
+}
+
+#Customers.ps1
+
+. ".\config.ps1"
+. ".\SqlTools.ps1"
+
+Invoke-Table "dbo.Customers" |
+Out-GridView
