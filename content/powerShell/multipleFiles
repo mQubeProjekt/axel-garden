@@ -20,7 +20,22 @@ function Invoke-Table
         -Query "SELECT * FROM $TableName" `
         -TrustServerCertificate:$SqlConfig.TrustCert
 }
+function Get-CustomerRemarks
+{
+    param(
+        [int]$CustomerID
+    )
 
+    Invoke-Sqlcmd `
+        -ServerInstance $SqlConfig.Server `
+        -Database $SqlConfig.Database `
+        -TrustServerCertificate `
+        -Query "
+            SELECT Remarks
+            FROM dbo.Customer
+            WHERE CustomerID = $CustomerID
+        "
+}
 #Customers.ps1
 
 . ".\config.ps1"
