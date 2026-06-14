@@ -28,7 +28,7 @@ function Get-RuleSQL
         "
 }
 
-function Set-CustomerRemarks
+function Set-RuleSQL
 {
     param(
         [int]$RuleID,
