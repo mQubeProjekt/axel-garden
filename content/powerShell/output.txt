@@ -1,0 +1,19 @@
+me                           Value                                                                                                                                                           
+----                           -----                                                                                                                                                           
+PSVersion                      5.1.26100.8655                                                                                                                                                  
+PSEdition                      Desktop                                                                                                                                                         
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}                                                                                                                                         
+BuildVersion                   10.0.26100.8655                                                                                                                                                 
+CLRVersion                     4.0.30319.42000                                                                                                                                                 
+WSManStackVersion              3.0                                                                                                                                                             
+PSRemotingProtocolVersion      2.3                                                                                                                                                             
+SerializationVersion           1.1.0.1                                                                                                                                                         
+
+
+
+PS C:\WINDOWS\system32> [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+
+GAC    Version        Location                                                                                                                                                                 
+---    -------        --------                                                                                                                                                                 
+True   v4.0.30319     C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Windows.Forms\v4.0_4.0.0.0__b77a5c561934e089\System.Windows.Forms.dll                                                  
+
