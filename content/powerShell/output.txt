@@ -1,14 +1,17 @@
-me                           Value                                                                                                                                                           
-----                           -----                                                                                                                                                           
-PSVersion                      5.1.26100.8655                                                                                                                                                  
-PSEdition                      Desktop                                                                                                                                                         
-PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}                                                                                                                                         
-BuildVersion                   10.0.26100.8655                                                                                                                                                 
-CLRVersion                     4.0.30319.42000                                                                                                                                                 
-WSManStackVersion              3.0                                                                                                                                                             
-PSRemotingProtocolVersion      2.3                                                                                                                                                             
-SerializationVersion           1.1.0.1                                                                                                                                                         
+$FormsAssembly = [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 
+function New-WinFormObject {
+    param([string]$TypeName)
+
+    $type = $FormsAssembly.GetType("System.Windows.Forms.$TypeName")
+    return [Activator]::CreateInstance($type)
+}
+
+$form = New-WinFormObject "Form"
+$form.Text = "Test"
+$form.Width = 400
+$form.Height = 200
+$form.ShowDialog()
 
 
 PS C:\WINDOWS\system32> [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
