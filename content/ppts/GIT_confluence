@@ -1,0 +1,280 @@
+Sehr gerne. Da wir das Thema gemeinsam entwickelt haben und die Dokumentation später auch anderen Kollegen helfen soll, würde ich sie nicht als "Anleitung", sondern als **interne technische Dokumentation** aufbauen.
+
+Mein Ziel wäre, dass ein neuer Mitarbeiter die Dokumentation aufschlagen und nach 20 Minuten seinen ersten Pull Request erstellen kann.
+
+## Vorschlag für die Seitenstruktur
+
+```text
+Git Integration for SQL Rules
+│
+├── 1. Introduction
+├── 2. Architecture
+├── 3. Initial Setup
+├── 4. Daily Development Workflow
+├── 5. Pull Request Process
+├── 6. Best Practices
+├── 7. Troubleshooting
+└── Appendix
+```
+
+---
+
+# Startseite
+
+Die Startseite sollte eher Management-geeignet sein und erklären, **warum** Git überhaupt eingeführt wurde.
+
+---
+
+## Git Integration for SQL Rules
+
+### Purpose
+
+The SQL Rules are stored in an Azure DevOps Git repository to provide version control, collaborative development and a controlled review process.
+
+This documentation describes the complete workflow from editing a SQL rule to merging the approved changes into the central repository.
+
+---
+
+### Objectives
+
+| Objective       | Benefit                                     |
+| --------------- | ------------------------------------------- |
+| Version control | Every change is traceable                   |
+| Collaboration   | Multiple developers can work simultaneously |
+| Code Review     | Higher quality through Pull Requests        |
+| Rollback        | Previous versions can easily be restored    |
+| Auditability    | Complete change history                     |
+
+---
+
+### Workflow Overview
+
+Hier würde später ein Mermaid-Diagramm stehen.
+
+```mermaid
+flowchart LR
+
+A[SQL Rule] --> B[Local Git Repository]
+B --> C[Commit]
+C --> D[Push]
+D --> E[Pull Request]
+E --> F[Review]
+F --> G[Merge]
+```
+
+---
+
+# Seite 2 – Architecture
+
+Hier erklären wir die technische Landschaft.
+
+```text
+Azure DevOps
+       │
+       ▼
+Git Repository
+       │
+       ▼
+Developer Workstation
+       │
+       ▼
+SQL File
+       │
+       ▼
+Pull Request
+       │
+       ▼
+Main Branch
+```
+
+Anschließend:
+
+### Components
+
+| Component                    | Description            |
+| ---------------------------- | ---------------------- |
+| Azure DevOps                 | Central Git repository |
+| SQL Server Management Studio | Editing SQL files      |
+| Git                          | Version control        |
+| Azure DevOps Pull Requests   | Review process         |
+
+---
+
+# Seite 3 – Initial Setup
+
+Das ist genau das, was wir gemeinsam durchgegangen sind.
+
+## Prerequisites
+
+* Azure DevOps account
+* Repository permissions
+* Git installed
+* SQL Server Management Studio
+* Local repository
+
+Dann
+
+### Clone Repository
+
+Screenshot
+
+↓
+
+### Open Repository
+
+Screenshot
+
+↓
+
+### Repository Structure
+
+```text
+Repository
+│
+└── src
+     └── rules
+           Rule001.sql
+           Rule002.sql
+           Rule003.sql
+```
+
+---
+
+# Seite 4 – Daily Workflow
+
+Das dürfte die wichtigste Seite werden.
+
+```mermaid
+flowchart TD
+
+A[Open Repository]
+B[Modify SQL Rule]
+C[Commit]
+D[Push]
+E[Create Pull Request]
+F[Review]
+G[Merge]
+
+A --> B --> C --> D --> E --> F --> G
+```
+
+Danach jeden Schritt einzeln erklären.
+
+---
+
+## Step 1
+
+Open the local repository.
+
+Screenshot.
+
+---
+
+## Step 2
+
+Edit the SQL file.
+
+Screenshot.
+
+---
+
+## Step 3
+
+Commit
+
+Screenshot
+
+Beispiel
+
+```text
+Fixed validation of hazardous goods classification.
+```
+
+---
+
+## Step 4
+
+Push
+
+Screenshot.
+
+---
+
+## Step 5
+
+Create Pull Request
+
+Screenshot.
+
+---
+
+## Step 6
+
+Merge
+
+Screenshot.
+
+---
+
+# Seite 5 – Pull Request Process
+
+Hier können wir den internen Ablauf dokumentieren.
+
+```mermaid
+sequenceDiagram
+
+Developer->>Azure DevOps: Push Branch
+Developer->>Reviewer: Create Pull Request
+Reviewer->>Developer: Review
+Developer->>Azure DevOps: Update Branch
+Reviewer->>Azure DevOps: Approve
+Azure DevOps->>Main Branch: Merge
+```
+
+---
+
+# Seite 6 – Best Practices
+
+Zum Beispiel:
+
+| Do                  | Don't                  |
+| ------------------- | ---------------------- |
+| Small commits       | Huge commits           |
+| Meaningful comments | "Update"               |
+| One topic per PR    | Many unrelated changes |
+| Test before commit  | Commit untested SQL    |
+
+---
+
+# Seite 7 – Troubleshooting
+
+Eine Tabelle mit typischen Problemen:
+
+| Problem              | Solution                      |
+| -------------------- | ----------------------------- |
+| Repository not found | Check permissions             |
+| Push rejected        | Pull latest changes           |
+| Merge conflict       | Resolve conflict locally      |
+| Reviewer missing     | Contact project administrator |
+
+---
+
+# Appendix
+
+* Git terminology
+* Branch naming conventions
+* Commit message examples
+* Useful Azure DevOps links
+
+---
+
+## Mein Vorschlag für den nächsten Schritt
+
+Ich würde die Dokumentation noch stärker an professionellen IT-Handbüchern ausrichten und jeder Seite einen einheitlichen Aufbau geben:
+
+1. **Purpose** – Warum gibt es diesen Schritt?
+2. **Procedure** – Was ist zu tun?
+3. **Expected Result** – Woran erkenne ich, dass es funktioniert hat?
+4. **Notes** – Typische Stolperfallen und Hinweise.
+
+Das sorgt für eine konsistente Struktur und macht die Dokumentation deutlich leichter nutzbar – sowohl für neue Kollegen als auch für spätere Erweiterungen.
