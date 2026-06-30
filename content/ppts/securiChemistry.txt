@@ -1,0 +1,15 @@
+The interface exchanges only iChemistry-specific identifiers. SAP material numbers are never transmitted outside the SAP landscape.
+
+SAP maintains an internal mapping between the SAP Material Number and the corresponding iChemistry identifier. Only the iChemistry identifier is sent to the external service.
+
+The authentication service returns a temporary access token that is valid only for accessing documents within the iChemistry platform. The token cannot be used to authenticate against SAP systems or to access SAP resources.
+
+No personal data, customer information, financial information, pricing data, or other confidential SAP business data is exchanged via the interface.
+
+The exchanged business data is therefore considered low sensitivity. The only security-sensitive information is the temporary authentication token, which is protected by HTTPS/TLS during transport and is limited to the iChemistry service.
+
+Ich würde sogar noch einen Satz ergänzen
+
+Da Security-Teams häufig genau diese Sorge haben:
+
+The interface is designed in such a way that no information received from iChemistry can be used to infer SAP material numbers or to gain access to SAP systems.
