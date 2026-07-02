@@ -1,0 +1,17 @@
+
+Hier die Details zu jedem Punkt:
+
+**Entwickler-Arbeitsplatz**
+
+- *SSMS*: SQL-Dateien werden lokal bearbeitet, meist als `.sql`-Skripte, die die Rules-Tabelle betreffen (INSERT/UPDATE/DELETE-Statements oder komplette Tabellendefinitionen). Wichtig für die Architektur: Ist das ein einzelnes Skript pro Änderung oder ein zusammenhängendes Regelwerk? Das beeinflusst, wie granular der spätere Diff/Vergleich sein muss.
+- *Lokales Git-Repository*: Verbindung zu SSMS läuft meist über ein externes Git-Tool (z. B. Git Bash, VS Code, oder ein SSMS-Add-in), da SSMS selbst keine native Git-Integration hat. Das ist oft ein blinder Fleck in Architekturdiagrammen – lohnt sich, als Anmerkung/Label festzuhalten, welches Tool genutzt wird.
+
+**Azure DevOps**
+
+- *Repository*: Zentrale Ablage, typischerweise mit einer Branch-Strategie (z. B. `main` + Feature-Branches). Für dein Szenario relevant: Gibt es eine feste Ordnerstruktur für die SQL-Skripte, damit spätere Automatisierung (z. B. dein Java-Branch-Vergleich mit JGit) gezielt nur die relevanten Dateien erkennt?
+- *Pull Request / Review*: Hier lohnt sich ein Vermerk, ob Branch-Policies aktiv sind (Pflicht-Reviewer, Build-Validierung vor Merge). Das ist architekturell relevant, weil es eine Kontrollinstanz zwischen Entwicklung und Produktion darstellt.
+
+**SQL Server**
+
+- *Rules-Tabelle*: Der kritischste und bislang am wenigsten spezifizierte Punkt. Hier brauchst du eigentlich eine Antwort auf die offene Frage von vorhin: Läuft die Synchronisation automatisiert (z. B. via Azure DevOps Pipeline, die nach Merge ein Deployment-Skript ausführt) oder manuell (jemand führt das SQL-Skript per Hand in SSMS gegen den Server aus)?
+
