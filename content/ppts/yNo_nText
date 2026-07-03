@@ -14,3 +14,35 @@ Bäder: 	50.000,00
 Elektrik: 	20.000,00
 Summe:	608.000,00
 
+-- Temporäre Tabelle für die Ergebnisse erstellen
+CREATE TABLE #ColumnsList (
+    DatabaseName SYSNAME,
+    TableName SYSNAME,
+    ColumnName SYSNAME,
+    DataType SYSNAME,
+    MaxLength INT
+);
+
+-- Alle Datenbanken durchlaufen
+EXEC sp_MSforeachdb '
+IF ''?'' NOT IN (''master'', ''model'', ''msdb'', ''tempdb'')
+BEGIN
+    INSERT INTO #ColumnsList
+    SELECT 
+        ''?'' AS DatabaseName,
+        t.name AS TableName,
+        c.name AS ColumnName,
+        ty.name AS DataType,
+        c.max_length AS MaxLength
+    FROM [?].sys.tables t
+    INNER JOIN [?].sys.columns c ON t.object_id = c.object_id
+    INNER JOIN [?].sys.types ty ON c.user_type_id = ty.user_type_id;
+END
+';
+
+-- Ergebnisse anzeigen
+SELECT * FROM #ColumnsList 
+ORDER BY DatabaseName, TableName, ColumnName;
+
+-- Temporäre Tabelle löschen
+DROP TABLE #ColumnsList;
