@@ -1,0 +1,5 @@
+The SQL Server data type **NTEXT** has been deprecated since SQL Server 2005 and should no longer be used for new developments. Existing NTEXT columns should be migrated to **NVARCHAR(MAX)** to ensure compatibility with current and future SQL Server versions.
+
+NVARCHAR(MAX) provides the same capability to store large Unicode text data (up to approximately 2 GB), but is fully integrated into the modern SQL Server data type architecture. It supports standard string operations such as `REPLACE`, `LEN`, `CHARINDEX`, and direct comparisons without requiring explicit conversions.
+
+Migrating from NTEXT to NVARCHAR(MAX) reduces technical debt, improves maintainability, simplifies database development, and ensures long-term upgrade compatibility.
