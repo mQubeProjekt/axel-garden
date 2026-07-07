@@ -1,0 +1,34 @@
+$grid.Add_CellDoubleClick({
+    param($sender, $e)
+
+    if ($e.RowIndex -lt 0) {
+        return
+    }
+
+    $filePath = $grid.Rows[$e.RowIndex].Cells["FullPath"].Value
+
+    if (-not (Test-Path $filePath)) {
+        [System.Windows.Forms.MessageBox]::Show("Datei nicht gefunden:`n$filePath")
+        return
+    }
+
+    $sqlText = Get-Content -Path $filePath -Raw
+
+    $popup = New-Object System.Windows.Forms.Form
+    $popup.Text = "SQL Preview - $([System.IO.Path]::GetFileName($filePath))"
+    $popup.Width = 900
+    $popup.Height = 700
+    $popup.StartPosition = "CenterParent"
+
+    $textBox = New-Object System.Windows.Forms.TextBox
+    $textBox.Multiline = $true
+    $textBox.ReadOnly = $true
+    $textBox.ScrollBars = "Both"
+    $textBox.WordWrap = $false
+    $textBox.Dock = "Fill"
+    $textBox.Font = New-Object System.Drawing.Font("Consolas", 10)
+    $textBox.Text = $sqlText
+
+    $popup.Controls.Add($textBox)
+    $popup.ShowDialog($form)
+})
