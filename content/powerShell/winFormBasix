@@ -1,0 +1,17 @@
+Add-Type -AssemblyName System.Windows.Forms
+
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "Datei-Auswahl"
+$form.Width = 500
+$form.Height = 300
+
+$button = New-Object System.Windows.Forms.Button
+$button.Text = "OK"
+$button.Left = 20
+$button.Top = 20
+$button.Add_Click({
+    [System.Windows.Forms.MessageBox]::Show("Button geklickt")
+})
+
+$form.Controls.Add($button)
+$form.ShowDialog()
