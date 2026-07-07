@@ -1,0 +1,42 @@
+$btnUpdate = New-Object System.Windows.Forms.Button
+$btnUpdate.Text = "Update DB"
+$btnUpdate.Height = 40
+$btnUpdate.Dock = "Bottom"
+
+$btnUpdate.Add_Click({
+
+    $counter = 0
+
+    foreach ($row in $grid.Rows) {
+
+        if ($row.Cells["Selected"].Value -eq $true) {
+
+            $filePath = $row.Cells["FullPath"].Value
+            $fileName = [System.IO.Path]::GetFileName($filePath)
+
+            # ID extrahieren:
+            # 12345_Test.sql -> 12345
+            $ruleId = $fileName.Split("_")[0]
+
+            try {
+
+                Set-RuleSQL -RuleId $ruleId -FilePath $filePath
+
+                $counter++
+
+            }
+            catch {
+
+                [System.Windows.Forms.MessageBox]::Show(
+                    "Fehler bei Rule $ruleId`n$($_.Exception.Message)"
+                )
+            }
+        }
+    }
+
+    [System.Windows.Forms.MessageBox]::Show(
+        "$counter Rules wurden aktualisiert."
+    )
+})
+
+$form.Controls.Add($btnUpdate)
