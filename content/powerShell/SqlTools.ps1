@@ -27,7 +27,6 @@ function Get-RuleSQL
             WHERE RuleID = $RuleID
         "
 }
-
 function Set-RuleSQL
 {
     param(
