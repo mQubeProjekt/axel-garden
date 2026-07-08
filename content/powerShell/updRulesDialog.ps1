@@ -5,7 +5,7 @@ Add-Type -AssemblyName System.Drawing
 . ".\config.ps1"
 . ".\SqlTools.ps1"
 
-$directory = "C:\axel\git\eD_DB_Test\src\rules"
+$directory = "C:\axel\BASF\dbs"
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "SQL File Processor"
@@ -53,8 +53,9 @@ $button.Add_Click({
         if ($row.Cells["Selected"].Value -eq $true) {
             $filePath = $row.Cells["FullPath"].Value
             $fileName = [System.IO.Path]::GetFileName($filePath)
-
             $ruleID = $fileName.Split("_")[0]
+
+            $ruleSQL = Get-Content -Path $filePath -Raw
 
             if ([string]::IsNullOrWhiteSpace($ruleID)) {
                 [System.Windows.Forms.MessageBox]::Show(
@@ -63,17 +64,14 @@ $button.Add_Click({
                 continue
             }
             # Call function in SQLTools.ps1
-            Set-RuleSQL -RuleID $ruleID -FilePath $filePath
-
-            # Namen ggf. ersetzen
-            Invoke-SqlFileUpdate -FilePath $filePath
+            Set-RuleSQL -RuleID $ruleID -RuleSQL $ruleSQL
         }
     }
 
     [System.Windows.Forms.MessageBox]::Show("Processing completed.")
 })
 $grid.Add_CellDoubleClick({
-    param($sender, $e)
+    param($control, $e)
 
     if ($e.RowIndex -lt 0) {
         return
