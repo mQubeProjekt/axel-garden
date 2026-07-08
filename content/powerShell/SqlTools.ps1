@@ -27,18 +27,13 @@ function Get-RuleSQL
             WHERE RuleID = $RuleID
         "
 }
+
 function Set-RuleSQL
 {
     param(
         [int]$RuleID,
-        [string]$FileName
+        [string]$RuleSQL
     )
 
-    $ruleSQL = Get-Content $FileName -Raw
-
-    Invoke-Sqlcmd `
-        -ServerInstance $SqlConfig.Server `
-        -Database $SqlConfig.Database `
-        -TrustServerCertificate `
-        -Query "EXEC dbo.setRuleSQL @RuleID = $CustomerID, @Remarks = N'$($ruleSQL.Replace("'", "''"))'"
+    Invoke-Sqlcmd -ServerInstance $SqlConfig.Server -Database $SqlConfig.Database -TrustServerCertificate -Query "EXEC dbo.setRuleSQL @RuleID = $RuleID, @ruleSQL = N'$($RuleSQL.Replace("'", "''"))'"
 }
