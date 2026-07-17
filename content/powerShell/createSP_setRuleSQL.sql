@@ -8,12 +8,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[setRuleSQL] @myRuleID INT, @myRuleSQL NVARCHAR(MAX) AS
-	BEGIN
-		UPDATE dbo.rules
-		SET ruleSQL = @myRuleSQL
-		WHERE RuleID = @myRuleID
-	END
+CREATE PROCEDURE dbo.setRuleSQL
+    @RuleID INT,
+    @RuleSQL NVARCHAR(MAX)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE dbo.rules
+       SET ruleSQL = @RuleSQL
+     WHERE RuleID = @RuleID
+END
 GO
 
 
