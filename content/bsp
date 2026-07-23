@@ -1,33 +1,177 @@
-{
-    "ASN": {
-        "SHIPMENT": [{
-                "RECORD_TYPE": "H",
-                "ORG_ID": "DHLEUR",
-                "DISTRIBUTION_CENTER": "NLKLE",
-                "BUSINESS_UNIT": "KILONUPXX",
-                "SHIPMENT_NUMBER": "4505506814",
-                "ACTION_CD": "A",
-                "SHIPMENT_DATE": "20241206",
-                "TOT_QTY_SHIPPED": "30",
-                "SUPPLIER_ID": "KLNPVENDOR",
-                "SUPPLIER_NAME": "KILONUPXX Vendor",
-                "DETAILS": {
-                    "SHIPMENT_DETAILS": [{
-                            "RECORD_TYPE": "D",
-                            "ORG_ID": "DHLEUR",
-                            "DISTRIBUTION_CENTER": "NLVEL",
-                            "BUSINESS_UNIT": "KILONUPXX",
-                            "SHIPMENT_NUMBER": "4505506814",
-                            "SHIPMENT_LINE_NO": "1",
-                            "ITEM": "1000829",
-                            "QTY": "30",
-                            "QTY_UOM": "EA",
-                            "LOT_NO": "6550",
-                            "REF_ID2": "803881380-ICU"
-                        }
-                    ]
-                }
-            }
-        ]
-    }
-}
+Sehr gerne. Ich würde die Beschreibung so verfassen, dass ein neuer Entwickler den Prozess ohne weitere Erklärung durchführen kann. Gleichzeitig bleibt der Text kurz genug für eine Confluence-Seite.
+
+# SQL Rule Development Workflow
+
+This document describes the standard workflow for implementing a Bug or User Story that requires changes to the SQL Rules.
+
+---
+
+## Step 1 – Create an Azure DevOps Work Item
+
+### Purpose
+
+Create the work item that documents the requested change.
+
+### Procedure
+
+1. Open **Azure DevOps**.
+2. Navigate to the project backlog.
+3. Create either a **Bug** or a **User Story**.
+4. Enter the required information (Title, Description, Acceptance Criteria, etc.).
+5. Save the work item.
+
+### Result
+
+The work item is available and serves as the basis for all subsequent development activities.
+
+---
+
+## Step 2 – Create a Branch
+
+### Purpose
+
+Create a dedicated Git branch that is linked to the Azure DevOps work item.
+
+### Procedure
+
+1. Open the Bug or User Story.
+2. Locate the **Development** section.
+3. Select **Create a branch**.
+4. Select the correct Git repository.
+5. Create the branch based on **main**.
+6. Confirm the creation.
+
+### Result
+
+A new remote branch has been created and linked to the work item.
+
+---
+
+## Step 3 – Fetch the Branch to the Local Repository
+
+### Purpose
+
+Download the newly created branch from Azure DevOps and make it available locally.
+
+### Procedure
+
+1. Open **SQL Server Management Studio (SSMS)**.
+2. Open the **Git** menu.
+3. Select **Fetch** to retrieve the latest changes from Azure DevOps.
+4. Open **Manage Branches**.
+5. Locate the newly created remote branch.
+6. Check out the branch.
+
+### Result
+
+The branch is available locally and becomes the active development branch.
+
+---
+
+## Step 4 – Modify or Create SQL Files
+
+### Purpose
+
+Implement the required changes.
+
+### Procedure
+
+For a **Bug**:
+
+1. Open the existing SQL file.
+2. Modify the SQL statement.
+3. Save the file.
+
+For a **User Story**:
+
+1. Create a new SQL file.
+2. Use the agreed naming convention.
+3. Save the file in the repository folder.
+
+### Result
+
+The required SQL changes are available in the local Git repository.
+
+---
+
+## Step 5 – Commit the Changes
+
+### Purpose
+
+Store the implemented changes in the local Git history.
+
+### Procedure
+
+1. Open **Git Changes** in SSMS.
+2. Review all modified files.
+3. Stage the changes.
+4. Enter a meaningful commit message.
+5. Commit the changes.
+
+### Result
+
+The changes have been committed to the local Git repository.
+
+---
+
+## Step 6 – Update the Rules Table
+
+### Purpose
+
+Deploy the selected SQL rules into the database.
+
+### Procedure
+
+1. Start the Rule Deployment Tool.
+2. Verify that the correct repository folder is configured.
+3. Select the SQL files to be deployed.
+4. Optionally review a rule by double-clicking the corresponding row.
+5. Select **Update DB**.
+6. Verify that the deployment completed successfully.
+
+### Result
+
+The selected SQL rules have been written to the rules table.
+
+---
+
+## Step 7 – Create a Pull Request
+
+### Purpose
+
+Submit the implemented changes for review.
+
+### Procedure
+
+1. Push the committed changes to Azure DevOps.
+2. Open the branch in Azure DevOps.
+3. Select **Create Pull Request**.
+4. Select **main** as the target branch.
+5. Assign the required reviewers.
+6. Create the Pull Request.
+
+### Result
+
+The Pull Request is available for review and approval.
+
+---
+
+## Step 8 – Merge into Main
+
+### Purpose
+
+Integrate the approved changes into the main development branch.
+
+### Procedure
+
+1. Wait until all reviewers have approved the Pull Request.
+2. Resolve any comments if required.
+3. Complete the Pull Request.
+4. Confirm the merge.
+5. Delete the feature branch if no longer required.
+
+### Result
+
+The changes are now part of the **main** branch and are available for future developments.
+
+Ich würde allerdings **eine kleine Änderung am Ablauf** vorschlagen: Aus unseren Gesprächen weiß ich, dass Ihr das **PowerShell-Deployment-Tool entwickelt habt, damit die Rule-Tabelle vor dem Pull Request aktualisiert werden kann**. Das ist eher ungewöhnlich, weil normalerweise erst gemergt und dann deployt wird. Wenn das bei Euch bewusst so vorgesehen ist (z. B. weil die Tester die Änderungen vor dem Merge benötigen), würde ich diesen Sonderfall am Anfang der Seite mit einem kurzen Hinweis erklären. Sonst wundert sich später jeder Entwickler über die Reihenfolge.
