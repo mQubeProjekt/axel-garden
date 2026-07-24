@@ -1,36 +1,17 @@
-## Step 2 – Create a Branch
+Term	Description
+Repository	A repository (or repo) is the central location where all project files and their complete version history are stored.
+Branch	A branch is an isolated line of development that allows changes to be made independently of the main code base.
+Commit	A commit records a set of related changes in the local repository. Each commit represents a logical development step and creates a new version in the project's history.
+Fetch	Fetch downloads the latest changes from the remote repository without modifying the local working branch. It updates the local view of the remote repository.
+Push	Push uploads local commits to the remote repository, making them available to other team members.
+Pull Request	A Pull Request (PR) is a request to review and merge the changes from one branch into another, typically the main branch.
+Merge	Merge combines the changes from one branch into another. After a successful merge, the target branch contains all approved changes.
 
-### Purpose
+Ich würde noch drei weitere Begriffe aufnehmen, da sie im Workflow ebenfalls vorkommen:
 
-Before implementing a change, a dedicated **Git branch** must be created.
+Term	Description
+Checkout	Checkout switches the local working copy to a specific branch. All subsequent changes are made in the selected branch.
+Main Branch	The main branch is the primary branch of the repository. It contains the approved and integrated version of the project.
+Work Item	A Work Item represents a task, bug, or user story in Azure DevOps. It is used to plan, track, and link development activities to the corresponding source code changes.
 
-A branch is an isolated copy of the source code that allows a developer to work independently without affecting the `main` branch. All modifications are performed within this branch until they have been reviewed and approved.
-
-Using separate branches ensures that multiple developers can work on different tasks simultaneously without interfering with each other's changes.
-
-### Procedure
-
-1. Open the corresponding **Bug** or **User Story** in Azure DevOps.
-2. Navigate to the **Development** section of the work item.
-3. Select **Create a branch**.
-4. Choose the repository that contains the SQL Rules.
-5. Verify that the new branch is created from the `main` branch.
-6. Accept the proposed branch name or adapt it according to the project's naming convention.
-7. Select **Create**.
-
-### Result
-
-Azure DevOps creates a new Git branch and automatically links it to the selected work item.
-
-The new branch now represents an isolated development environment for this change. All SQL files that are modified or newly created as part of this Bug or User Story will be stored in this branch until they are merged back into `main` through a Pull Request.
-
-### Background
-
-The `main` branch always represents the current approved version of the SQL Rules.
-
-Developers should never make changes directly in `main`. Instead, every Bug or User Story is implemented in its own branch. This approach provides the following advantages:
-
-* Changes from different developers remain isolated.
-* Every change can be reviewed independently.
-* Errors can be corrected without affecting the productive code base.
-* The complete history of every modification is preserved by Git.
+Diese Definitionen sind bewusst kurz (1–2 Sätze) und orientieren sich an der Terminologie, wie sie in technischen Dokumentationen und Microsoft-Dokumenten ü
