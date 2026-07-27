@@ -1,25 +1,26 @@
-    CALL FUNCTION 'BAPI_OUTB_DELIVERY_CONFIRM_DEC'
-      EXPORTING
-        vbeln        = iv_delivery
-        posting_date = sy-datum
-      TABLES
-        msg          = lt_msg
-        return       = lt_return.
+Create a very simple PowerShell 5.1 WinForms test application.
 
-    " Erst lt_return prüfen
-    READ TABLE lt_return INTO es_return WITH KEY type = 'E'.
-    IF sy-subrc <> 0.
-      READ TABLE lt_return INTO es_return WITH KEY type = 'A'.
-    ENDIF.
+Requirements:
 
-    " Falls lt_return leer, lt_msg auswerten
-    IF es_return IS INITIAL.
-      DATA ls_msg TYPE bapi_msg.
-      READ TABLE lt_msg INTO ls_msg WITH KEY type = 'E'.
-      IF sy-subrc = 0.
-        es_return-type    = ls_msg-type.
-        es_return-message = ls_msg-message.
-      ENDIF.
-    ENDIF.
+* Do not use WPF.
+* Use only `System.Windows.Forms` and `System.Drawing`.
+* Create a form titled `TreeView Test`.
+* Add a `System.Windows.Forms.TreeView` to the form.
+* Create exactly three hierarchy levels:
 
-    		The type "BAPI_MSG" does not have a structure and therefore does not have a component called "TYPE".
+  * Process
+  * Process Step
+  * Detail
+* Use hard-coded sample data only.
+* Add at least:
+
+  * two processes,
+  * two process steps under each process,
+  * two details under each process step.
+* Expand all nodes when the form opens.
+* When a node is selected, display its text and hierarchy level in a label or text box on the right side.
+* Include error handling for loading the required .NET assemblies.
+* If `System.Windows.Forms` or `TreeView` cannot be created, show a clear error message.
+* The script must run in Windows PowerShell 5.1.
+* Save the complete script as `TreeViewTest.ps1`.
+* Keep the code simple and add short comments explaining the important sections.
