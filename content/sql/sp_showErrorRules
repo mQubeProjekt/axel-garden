@@ -1,0 +1,17 @@
+CREATE PROCEDURE dbo.showErrorRules AS
+	BEGIN
+	SELECT tsx.TaskID,tsx.Task,rs.RuleSetID,rs.RuleSetname,rlz.RuleID,rlz.RuleName
+	FROM enviDataRulesDB_V2.dbo.tasks tsx
+		INNER JOIN enviDataRulesDB_V2.dbo.tasks2RuleSets t2rs 
+			ON t2rs.taskFK = tsx.TaskID
+		INNER JOIN enviDataRulesDB_V2.dbo.ruleSets rs
+			ON rs.RuleSetID = t2rs.RuleSetFK
+		INNER JOIN enviDataRulesDB_V2.dbo.ruleSets2Rules rs2r
+			ON rs2r.RuleSetFK = rs.RuleSetID
+		INNER JOIN enviDataRulesDB_V2.dbo.rules rlz
+			ON rlz.RuleID = rs2r.RuleFK
+		LEFT JOIN enviDataRulesDB_V2.dbo.paraTabellen pTab
+			ON pTab.RuleFK = rlz.RuleID
+	WHERE rlz.RuleID IN (1220,1222,28500)
+	ORDER BY tsx.taskid, t2rs.Sort, rs2r.Sort
+END
