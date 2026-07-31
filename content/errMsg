@@ -24,3 +24,15 @@ Requirements:
 * The script must run in Windows PowerShell 5.1.
 * Save the complete script as `TreeViewTest.ps1`.
 * Keep the code simple and add short comments explaining the important sections.
+
+
+SELECT h.*
+FROM haupt_tabelle h
+JOIN untertabelle_1 u1 ON h.id = u1.haupt_id
+JOIN untertabelle_2 u2 ON h.id = u2.haupt_id
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM verknuepfte_tabelle v
+    WHERE v.wert_aus_u1 = u1.suchwert
+      AND v.wert_aus_u2 = u2.suchwert
+);
