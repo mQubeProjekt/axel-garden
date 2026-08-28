@@ -1,0 +1,18 @@
+SELECT
+    t.ID,
+    t.MeinTextfeld,
+    u.UnitText AS GefundeneEinheit
+FROM MeineTabelle t
+CROSS APPLY (
+    SELECT TOP (1)
+        u.UnitText
+    FROM Units u
+    WHERE t.MeinTextfeld LIKE
+          '%' +
+          CASE
+              WHEN u.UnitText = '%' THEN '[%]'
+              ELSE u.UnitText
+          END +
+          '%'
+    ORDER BY LEN(u.UnitText) DESC
+) u;
