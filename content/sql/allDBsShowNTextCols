@@ -1,0 +1,25 @@
+DECLARE @sql nvarchar(max) = N'';
+
+SELECT @sql = @sql + N'
+USE ' + QUOTENAME(name) + N';
+
+SELECT
+    DB_NAME()        AS DatabaseName,
+    s.name           AS SchemaName,
+    t.name           AS TableName,
+    c.name           AS ColumnName,
+    ty.name          AS DataType
+FROM sys.columns c
+JOIN sys.types ty
+    ON c.user_type_id = ty.user_type_id
+JOIN sys.tables t
+    ON c.object_id = t.object_id
+JOIN sys.schemas s
+    ON t.schema_id = s.schema_id
+WHERE ty.name = ''ntext'';
+'
+FROM sys.databases
+WHERE state_desc = 'ONLINE'
+  AND database_id > 4;   -- Systemdatenbanken ausschließen
+
+EXEC sys.sp_executesql @sql;
