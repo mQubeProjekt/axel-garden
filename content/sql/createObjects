@@ -1,0 +1,100 @@
+DECLARE @ErrorMessage   NVARCHAR(4000)
+DECLARE @MissingObject  NVARCHAR(256)
+DECLARE @ObjectName     NVARCHAR(128)
+DECLARE @SchemaName     NVARCHAR(128)
+DECLARE @SourceDB       NVARCHAR(128) = 'QuellDatenbank'
+DECLARE @TargetDB       NVARCHAR(128) = 'ZielDatenbank'
+DECLARE @ObjectType     CHAR(2)
+DECLARE @SQL            NVARCHAR(MAX)
+DECLARE @Definition     NVARCHAR(MAX)
+
+-- 1. SP ausführen und Fehler abfangen
+BEGIN TRY
+    EXEC deine_gespeicherte_prozedur
+END TRY
+BEGIN CATCH
+    SET @ErrorMessage = ERROR_MESSAGE()
+
+    -- 2. Objektnamen aus Fehlermeldung extrahieren
+    IF @ErrorMessage LIKE '%''%''%'
+    BEGIN
+        SET @MissingObject = SUBSTRING(
+            @ErrorMessage,
+            CHARINDEX('''', @ErrorMessage) + 1,
+            CHARINDEX('''', @ErrorMessage, CHARINDEX('''', @ErrorMessage) + 1)
+            - CHARINDEX('''', @ErrorMessage) - 1
+        )
+    END
+
+    -- Schema und Objektname trennen
+    SET @SchemaName = ISNULL(PARSENAME(@MissingObject, 2), 'dbo')
+    SET @ObjectName = PARSENAME(@MissingObject, 1)
+
+    PRINT 'Fehlendes Objekt: ' + @SchemaName + '.' + @ObjectName
+
+    -- 3. Objekttyp in der Quell-DB ermitteln
+    SET @SQL = '
+        SELECT @type = type
+        FROM ' + QUOTENAME(@SourceDB) + '.sys.objects
+        WHERE name        = ''' + @ObjectName  + '''
+          AND SCHEMA_NAME(schema_id) = ''' + @SchemaName + '''
+    '
+    EXEC sp_executesql @SQL, N'@type CHAR(2) OUTPUT', @type = @ObjectType OUTPUT
+
+    IF @ObjectType IS NULL
+    BEGIN
+        PRINT '✘ Objekt nicht in Quell-DB gefunden.'
+        RETURN
+    END
+
+    PRINT 'Objekttyp: ' + @ObjectType  -- U=Tabelle, V=View, P=Procedure, FN/IF/TF=Function
+
+    -- 4a. TABELLE → SELECT INTO (Struktur + Daten)
+    IF @ObjectType = 'U'
+    BEGIN
+        SET @SQL = '
+            SELECT *
+            INTO ' + QUOTENAME(@TargetDB) + '.' + QUOTENAME(@SchemaName) + '.' + QUOTENAME(@ObjectName) + '
+            FROM ' + QUOTENAME(@SourceDB) + '.' + QUOTENAME(@SchemaName) + '.' + QUOTENAME(@ObjectName) + '
+        '
+        PRINT '--- Tabelle wird kopiert (Struktur + Daten) ---'
+        PRINT @SQL
+
+        -- Nur Struktur, ohne Daten:
+        -- WHERE 1 = 0
+
+        EXEC sp_executesql @SQL
+        PRINT '✔ Tabelle angelegt: ' + @SchemaName + '.' + @ObjectName
+    END
+
+    -- 4b. VIEW / PROCEDURE / FUNCTION → OBJECT_DEFINITION + CREATE OR ALTER
+    ELSE IF @ObjectType IN ('V', 'P', 'FN', 'IF', 'TF')
+    BEGIN
+        SET @SQL = '
+            SELECT @def = OBJECT_DEFINITION(
+                OBJECT_ID(''' + QUOTENAME(@SourceDB) + '.' + QUOTENAME(@SchemaName) + '.' + QUOTENAME(@ObjectName) + ''')
+            )
+        '
+        EXEC sp_executesql @SQL, N'@def NVARCHAR(MAX) OUTPUT', @def = @Definition OUTPUT
+
+        IF @Definition IS NULL
+        BEGIN
+            PRINT '✘ Definition nicht auslesbar.'
+            RETURN
+        END
+
+        SET @Definition = REPLACE(@Definition, 'CREATE ', 'CREATE OR ALTER ')
+
+        PRINT '--- Definition ---'
+        PRINT @Definition
+
+        EXEC sp_executesql @Definition
+        PRINT '✔ Objekt angelegt: ' + @SchemaName + '.' + @ObjectName
+    END
+
+    ELSE
+    BEGIN
+        PRINT '✘ Objekttyp wird nicht unterstützt: ' + @ObjectType
+    END
+
+END CATCH
