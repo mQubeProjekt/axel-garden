@@ -11,3 +11,11 @@ R9	Berechtigungskonzept: Wer darf SDS aufrufen?	Soll
 R10	Logging der Aufrufe und Fehler, Monitoring	Soll
 R11	Netzwerkfreigaben (Proxy, Firewall, Zertifikate) zwischen S/4 und iChemistry	Muss
 R12	Initiale Zuordnung der Bestandsmaterialien zu iChemistry-Produkten (Initialload)	Muss
+
+
+
+Trigger: Bei welchen Vorgängen soll das SDS erscheinen? Infrage kommen Wareneingang (101), Umlagerung (311), Verbrauchsbuchung (261), Kommissionierung, Inventur, Bestellung oder Produktionsauftrag.
+Nutzer und Geräte: Wer arbeitet damit (Lager, Produktion, Einkauf), und wo (SAP GUI, Fiori, mobile Geräte)?
+Pflicht oder Komfort: Muss das SDS bestätigt werden, oder ist es nur eine Hilfe?
+Fehlende SDS: Wer wird informiert, und wer besorgt es?
+Technische Variante: Wird das SDS live abgerufen, oder wird es in SAP abgelegt (z.B. DMS oder GOS)? Live ist aktueller, Ablage ist robuster bei Ausfällen.
