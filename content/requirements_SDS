@@ -1,0 +1,13 @@
+ID	Requirement	Prio
+R1	Jedes gefahrstoffrelevante SAP-Material lässt sich eindeutig einem Produkt in iChemistry zuordnen (Schlüssel, Ablageort im SAP, Pflege der Zuordnung)	Muss
+R2	Aus definierten SAP-Transaktionen und Prozessschritten kann das aktuelle SDS aufgerufen werden (Trigger siehe unten)	Muss
+R3	Es wird immer die aktuell gültige SDS-Version angezeigt	Muss
+R4	Auswahl der SDS-Sprache nach Anmeldesprache oder Land des Werks	Soll
+R5	Definiertes Verhalten, wenn kein SDS vorliegt (Hinweis, Warnung oder Buchungssperre)	Muss
+R6	Steuerung über ein Kennzeichen, ob ein Material SDS-pflichtig ist	Soll
+R7	Die SDS-Anzeige darf bei Ausfall oder Langsamkeit der Cloud-Anbindung die Buchung nicht blockieren	Muss
+R8	Authentifizierung gegenüber iChemistry (SSO oder technischer Zugang), ohne dass Anwender sich separat anmelden müssen	Muss
+R9	Berechtigungskonzept: Wer darf SDS aufrufen?	Soll
+R10	Logging der Aufrufe und Fehler, Monitoring	Soll
+R11	Netzwerkfreigaben (Proxy, Firewall, Zertifikate) zwischen S/4 und iChemistry	Muss
+R12	Initiale Zuordnung der Bestandsmaterialien zu iChemistry-Produkten (Initialload)	Muss
