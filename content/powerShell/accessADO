@@ -1,12 +1,8 @@
-# Test-AdoConnection.ps1
-# Prüft nur den Zugriff auf Azure DevOps.
-# Es werden KEINE Work Items erstellt oder geändert.
-
 $organization = "DEINE_ORGANISATION"
+$project      = "DEIN_PROJEKT"
+$workItemType = "Task"
 
-# PAT nur für die aktuelle PowerShell-Session abfragen
 $securePat = Read-Host "Azure DevOps PAT eingeben" -AsSecureString
-
 $ptr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($securePat)
 
 try {
@@ -17,33 +13,42 @@ try {
     )
 
     $headers = @{
-        Authorization = "Basic $base64AuthInfo"
+        Authorization  = "Basic $base64AuthInfo"
+        "Content-Type" = "application/json-patch+json"
     }
 
-    $uri = "https://dev.azure.com/$organization/_apis/projects?api-version=7.1"
+    $body = @(
+        @{
+            op    = "add"
+            path  = "/fields/System.Title"
+            value = "Test Task from PowerShell"
+        },
+        @{
+            op    = "add"
+            path  = "/fields/System.Description"
+            value = "This task was created automatically via PowerShell."
+        }
+    ) | ConvertTo-Json
 
-    Write-Host ""
-    Write-Host "Connecting to Azure DevOps..."
-    Write-Host "Organization: $organization"
-    Write-Host ""
+    $uri = "https://dev.azure.com/$organization/$project/_apis/wit/workitems/`$$workItemType?api-version=7.1"
+
+    Write-Host "Creating Work Item..."
 
     $result = Invoke-RestMethod `
         -Uri $uri `
-        -Method Get `
-        -Headers $headers
+        -Method Post `
+        -Headers $headers `
+        -Body $body
 
-    Write-Host "Connection successful."
     Write-Host ""
-    Write-Host "Accessible projects:"
-    Write-Host "--------------------"
-
-    foreach ($project in $result.value) {
-        Write-Host "$($project.name)   [$($project.state)]"
-    }
+    Write-Host "Work Item created successfully."
+    Write-Host "ID: $($result.id)"
+    Write-Host "Title: $($result.fields.'System.Title')"
+    Write-Host "URL: $($result._links.html.href)"
 }
 catch {
     Write-Host ""
-    Write-Host "Connection failed."
+    Write-Host "Creation failed:"
     Write-Host $_.Exception.Message
 }
 finally {
@@ -53,3 +58,5 @@ finally {
 
     $pat = $null
 }
+
+Pause
