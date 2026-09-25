@@ -1,82 +1,55 @@
 # Test-AdoConnection.ps1
-# Authentifizierung über Microsoft Entra ID
-# Es werden KEINE Daten in Azure DevOps verändert.
+# Prüft nur den Zugriff auf Azure DevOps.
+# Es werden KEINE Work Items erstellt oder geändert.
 
 $organization = "DEINE_ORGANISATION"
 
-# Prüfen, ob Az.Accounts vorhanden ist
-if (-not (Get-Module -ListAvailable -Name Az.Accounts)) {
-    Write-Host "Az.Accounts ist nicht installiert."
-    Write-Host "Installation:"
-    Write-Host "Install-Module Az.Accounts -Scope CurrentUser"
-    exit
-}
+# PAT nur für die aktuelle PowerShell-Session abfragen
+$securePat = Read-Host "Azure DevOps PAT eingeben" -AsSecureString
 
-Import-Module Az.Accounts
+$ptr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($securePat)
 
 try {
+    $pat = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($ptr)
 
-    Write-Host ""
-    Write-Host "Microsoft-Anmeldung wird gestartet..."
-    Write-Host ""
-
-    # Interaktive Anmeldung mit dem normalen Firmenkonto
-    Connect-AzAccount
-
-    Write-Host ""
-    Write-Host "Anmeldung erfolgreich."
-    Write-Host "Hole Azure-DevOps Access Token..."
-
-    # Token speziell für Azure DevOps anfordern
-    $tokenResponse = Get-AzAccessToken `
-        -ResourceUrl "https://app.vssps.visualstudio.com/"
-
-    # Aktuelle Az.Accounts-Version liefert das Token als SecureString
-    $ptr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR(
-        $tokenResponse.Token
+    $base64AuthInfo = [Convert]::ToBase64String(
+        [Text.Encoding]::ASCII.GetBytes(":$pat")
     )
 
-    try {
-        $accessToken =
-            [Runtime.InteropServices.Marshal]::PtrToStringBSTR($ptr)
-
-        $headers = @{
-            Authorization = "Bearer $accessToken"
-            Accept        = "application/json"
-        }
-
-        $uri =
-            "https://dev.azure.com/$organization/_apis/projects?api-version=7.2"
-
-        Write-Host ""
-        Write-Host "Connecting to Azure DevOps..."
-        Write-Host "Organization: $organization"
-        Write-Host ""
-
-        $result = Invoke-RestMethod `
-            -Uri $uri `
-            -Method Get `
-            -Headers $headers
-
-        Write-Host "Connection successful."
-        Write-Host ""
-        Write-Host "Accessible projects:"
-        Write-Host "--------------------"
-
-        foreach ($project in $result.value) {
-            Write-Host "$($project.name) [$($project.state)]"
-        }
+    $headers = @{
+        Authorization = "Basic $base64AuthInfo"
     }
-    finally {
-        if ($ptr -ne [IntPtr]::Zero) {
-            [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr)
-        }
 
-        $accessToken = $null
+    $uri = "https://dev.azure.com/$organization/_apis/projects?api-version=7.1"
+
+    Write-Host ""
+    Write-Host "Connecting to Azure DevOps..."
+    Write-Host "Organization: $organization"
+    Write-Host ""
+
+    $result = Invoke-RestMethod `
+        -Uri $uri `
+        -Method Get `
+        -Headers $headers
+
+    Write-Host "Connection successful."
+    Write-Host ""
+    Write-Host "Accessible projects:"
+    Write-Host "--------------------"
+
+    foreach ($project in $result.value) {
+        Write-Host "$($project.name)   [$($project.state)]"
     }
 }
 catch {
     Write-Host ""
     Write-Host "Connection failed."
     Write-Host $_.Exception.Message
+}
+finally {
+    if ($ptr -ne [IntPtr]::Zero) {
+        [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr)
+    }
+
+    $pat = $null
 }
