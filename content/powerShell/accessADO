@@ -50,6 +50,18 @@ catch {
     Write-Host ""
     Write-Host "Creation failed:"
     Write-Host $_.Exception.Message
+
+    if ($_.Exception.Response) {
+        $reader = New-Object System.IO.StreamReader(
+            $_.Exception.Response.GetResponseStream()
+        )
+
+        $responseBody = $reader.ReadToEnd()
+
+        Write-Host ""
+        Write-Host "Azure DevOps response:"
+        Write-Host $responseBody
+    }
 }
 finally {
     if ($ptr -ne [IntPtr]::Zero) {
