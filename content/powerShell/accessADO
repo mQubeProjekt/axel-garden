@@ -1,5 +1,5 @@
-$organization = "DEINE_ORGANISATION"
-$project      = "DEIN_PROJEKT"
+$organization = "basf4ServicesCoreSystems"
+$project      = "enviData"
 $workItemType = "Task"
 
 $securePat = Read-Host "Azure DevOps PAT eingeben" -AsSecureString
