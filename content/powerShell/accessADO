@@ -1,0 +1,55 @@
+# Test-AdoConnection.ps1
+# Prüft nur den Zugriff auf Azure DevOps.
+# Es werden KEINE Work Items erstellt oder geändert.
+
+$organization = "DEINE_ORGANISATION"
+
+# PAT nur für die aktuelle PowerShell-Session abfragen
+$securePat = Read-Host "Azure DevOps PAT eingeben" -AsSecureString
+
+$ptr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($securePat)
+
+try {
+    $pat = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($ptr)
+
+    $base64AuthInfo = [Convert]::ToBase64String(
+        [Text.Encoding]::ASCII.GetBytes(":$pat")
+    )
+
+    $headers = @{
+        Authorization = "Basic $base64AuthInfo"
+    }
+
+    $uri = "https://dev.azure.com/$organization/_apis/projects?api-version=7.1"
+
+    Write-Host ""
+    Write-Host "Connecting to Azure DevOps..."
+    Write-Host "Organization: $organization"
+    Write-Host ""
+
+    $result = Invoke-RestMethod `
+        -Uri $uri `
+        -Method Get `
+        -Headers $headers
+
+    Write-Host "Connection successful."
+    Write-Host ""
+    Write-Host "Accessible projects:"
+    Write-Host "--------------------"
+
+    foreach ($project in $result.value) {
+        Write-Host "$($project.name)   [$($project.state)]"
+    }
+}
+catch {
+    Write-Host ""
+    Write-Host "Connection failed."
+    Write-Host $_.Exception.Message
+}
+finally {
+    if ($ptr -ne [IntPtr]::Zero) {
+        [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr)
+    }
+
+    $pat = $null
+}
