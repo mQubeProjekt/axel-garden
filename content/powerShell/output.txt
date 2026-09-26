@@ -7,3 +7,5 @@ Azure DevOps response:
 {"$id":"1","innerException":null,"message":"No api-version was supplied for the \"POST\" request. The version must be supplied either as part of the Accept header (e.g. \"application/json; api
 -version=1.0\") or as a query parameter (e.g. \"?api-version=1.0\").","typeName":"Microsoft.VisualStudio.Services.WebApi.VssVersionNotSpecifiedException, Microsoft.VisualStudio.Services.WebApi
 ","typeKey":"VssVersionNotSpecifiedException","errorCode":0,"eventId":3000}
+
+Write-Host "URI: $uri"
