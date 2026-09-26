@@ -9,3 +9,4 @@ Azure DevOps response:
 ","typeKey":"VssVersionNotSpecifiedException","errorCode":0,"eventId":3000}
 
 Write-Host "URI: $uri"
+URI: https://dev.azure.com/myKunde/myProject/_apis/wit/workitems/$-version=7.1
