@@ -51,16 +51,21 @@ catch {
     Write-Host "Creation failed:"
     Write-Host $_.Exception.Message
 
-    if ($_.Exception.Response) {
-        $reader = New-Object System.IO.StreamReader(
-            $_.Exception.Response.GetResponseStream()
-        )
-
-        $responseBody = $reader.ReadToEnd()
-
+    if ($_.ErrorDetails.Message) {
         Write-Host ""
         Write-Host "Azure DevOps response:"
-        Write-Host $responseBody
+        Write-Host $_.ErrorDetails.Message
+    }
+    elseif ($_.Exception.Response) {
+        try {
+            $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
+            $responseBody = $reader.ReadToEnd()
+            Write-Host ""
+            Write-Host "Azure DevOps response:"
+            Write-Host $responseBody
+        } catch {
+            Write-Host "(Konnte Response-Body nicht auslesen: $($_.Exception.Message))"
+        }
     }
 }
 finally {
