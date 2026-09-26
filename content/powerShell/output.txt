@@ -1,27 +1,9 @@
-BG]: PS C:\WINDOWS\system32>> 
+Creation failed:
 
-[DBG]: PS C:\WINDOWS\system32>> 
+Der Remoteserver hat einen Fehler zurückgegeben: (400) Ungültige Anforderung.
+Azure DevOps response:
 
-[DBG]: PS C:\WINDOWS\system32>> 
-
-[DBG]: PS C:\WINDOWS\system32>> 
-
-
-[DBG]: PS C:\WINDOWS\system32>> 
-Microsoft-Anmeldung wird gestartet...
-
-[DBG]: PS C:\WINDOWS\system32>> 
-
-
-[DBG]: PS C:\WINDOWS\system32>> 
-Please select the account you want to login with.
-
-WARNUNG: Unable to acquire token for tenant 'organizations' with error 'InteractiveBrowserCredential authentication failed: A window handle must be configured. See https://aka.ms/msal-net-wam#
-parent-window-handles'
-WARNUNG: Please run 'Connect-AzAccount -DeviceCode' if browser is not supported in this session.
-Connect-AzAccount : InteractiveBrowserCredential authentication failed: A window handle must be configured. See https://aka.ms/msal-net-wam#parent-window-handles
-In C:\axel\scripts\ADO\testADO_Conn.ps1:24 Zeichen:5
-+     Connect-AzAccount
-+     ~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : CloseError: (:) [Connect-AzAccount], AuthenticationFailedException
-    + FullyQualifiedErrorId : Microsoft.Azure.Commands.Profile.ConnectAzureRmAccountCommand
+[DBG]: PS C:\Users\LosinsA>> 
+{"$id":"1","innerException":null,"message":"No api-version was supplied for the \"POST\" request. The version must be supplied either as part of the Accept header (e.g. \"application/json; api
+-version=1.0\") or as a query parameter (e.g. \"?api-version=1.0\").","typeName":"Microsoft.VisualStudio.Services.WebApi.VssVersionNotSpecifiedException, Microsoft.VisualStudio.Services.WebApi
+","typeKey":"VssVersionNotSpecifiedException","errorCode":0,"eventId":3000}
