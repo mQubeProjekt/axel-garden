@@ -10,3 +10,10 @@ Azure DevOps response:
 
 Write-Host "URI: $uri"
 URI: https://dev.azure.com/myKunde/myProject/_apis/wit/workitems/$-version=7.1
+
+Dienstag, 29. September 2026	Reste
+Mittwoch, 30. September 2026	Fritatensuppe
+Donnerstag, 1. Oktober 2026	Nudeln mit Oliven und Kapern
+Freitag, 2. Oktober 2026	Risotto mit Fischstäbchen // Lachs
+Samstag, 3. Oktober 2026	Hirse-Bratlinge Gurkensalat // Kartoffeln
+Sonntag, 4. Oktober 2026	Bauernfrühstück mit viel Gemüse
