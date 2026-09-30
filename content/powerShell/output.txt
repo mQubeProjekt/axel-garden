@@ -11,9 +11,21 @@ Azure DevOps response:
 Write-Host "URI: $uri"
 URI: https://dev.azure.com/myKunde/myProject/_apis/wit/workitems/$-version=7.1
 
-Dienstag, 29. September 2026	Reste
-Mittwoch, 30. September 2026	Fritatensuppe
-Donnerstag, 1. Oktober 2026	Nudeln mit Oliven und Kapern
-Freitag, 2. Oktober 2026	Risotto mit Fischstäbchen // Lachs
-Samstag, 3. Oktober 2026	Hirse-Bratlinge Gurkensalat // Kartoffeln
-Sonntag, 4. Oktober 2026	Bauernfrühstück mit viel Gemüse
+### Current behavior
+
+When a record is inserted, the system checks whether the **standard usage** is available.
+
+If the standard usage is not found, it is added automatically — even if another usage already exists.
+
+### Proposed change
+
+Instead of checking specifically for the standard usage, the system should first check whether **any usage already exists** for the record.
+
+- If at least one usage exists → keep the existing usage(s) unchanged.
+- If no usage exists → add the standard usage as a default.
+
+### Expected behavior
+
+The standard usage would therefore only be used as a **fallback/default value** when no usage information is available.
+
+This would prevent an additional standard usage from being created when a valid usage has already been maintained.
